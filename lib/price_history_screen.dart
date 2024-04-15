@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:stock_chart_flutter/price_history_model.dart';
+import 'package:stock_chart_flutter/stock_chart_painter.dart';
 
 class StockPriceHistoryScreen extends StatefulWidget {
   const StockPriceHistoryScreen({super.key});
@@ -32,19 +33,24 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
   @override
   Widget build(BuildContext context) {
     if (data != null) {
-      PriceHistory priceHistory = PriceHistory.fromJson(data!);
-      List prices = priceHistory.stockPriceHistory;
-      print(prices[0]);
-    }
+      List<StockData> stockPriceHistory =
+          PriceHistory.fromJson(data!).stockPriceHistory;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Stock Price History'),
-      ),
-      body: Center(
-        child: CustomPaint(
-            size: Size(MediaQuery.of(context).size.width - 10, 200.0)),
-      ),
-    );
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Stock Price History'),
+        ),
+        body: Center(
+          child: CustomPaint(
+            size: Size(MediaQuery.of(context).size.width - 10, 200.0),
+            painter: StockPriceChartPainter(stockPriceHistory),
+          ),
+        ),
+      );
+    } else {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
   }
 }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:stock_chart_flutter/history_screen.dart';
+import 'package:stock_chart_flutter/price_history_screen.dart';
 
 void main() {
   runApp(const MyApp());
