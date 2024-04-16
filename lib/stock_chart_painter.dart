@@ -12,9 +12,10 @@ class StockPriceChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Color paintColor = stockPriceHistory[0].price > stockPriceHistory.last.price
-        ? Colors.red
-        : Colors.green;
+    Color paintColor =
+        stockPriceHistory.first.price > stockPriceHistory.last.price
+            ? Colors.red
+            : Colors.green;
     // Draw chart axes
     canvas.drawLine(Offset(0, size.height), Offset(size.width, size.height),
         gridPaint); // X-axis
@@ -100,7 +101,41 @@ class StockPriceChartPainter extends CustomPainter {
 
       dash = !dash;
     }
-    canvas.drawCircle(Offset(lastX, lastY), 4, Paint()..color = paintColor);
+    canvas.drawCircle(Offset(lastX, lastY), 5, Paint()..color = paintColor);
+
+    // Define colors for the gradient
+    Color startColor = paintColor.withOpacity(0.5); // Adjust opacity as needed
+    Color endColor =
+        Colors.transparent; // Fully transparent color at the bottom
+
+    // Create a gradient shader
+    final Shader gradientShader = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [startColor, endColor],
+    ).createShader(Rect.fromLTRB(0, 0, size.width, size.height));
+
+    Path gradientPath = Path();
+    gradientPath.moveTo(0, size.height); // Start at the bottom-left corner
+
+    // Iterate over each data point to define the path
+    for (int i = 0; i < dates.length; i++) {
+      double x =
+          ((dates[i].millisecondsSinceEpoch - minDate.millisecondsSinceEpoch) /
+                  (maxDate.millisecondsSinceEpoch -
+                      minDate.millisecondsSinceEpoch)) *
+              size.width;
+      double y = height -
+          (prices[i] / prices.reduce((a, b) => a > b ? a : b)) * height;
+      gradientPath.lineTo(x, y);
+// Add line segments to the path
+    }
+    // Draw the filled area below the line chart using the gradient shader
+    canvas.drawPath(
+        gradientPath,
+        Paint()
+          ..shader = gradientShader
+          ..style = PaintingStyle.fill);
   }
 
   @override

@@ -42,7 +42,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         ),
         body: Center(
           child: CustomPaint(
-            size: Size(MediaQuery.of(context).size.width - 10, 200.0),
+            size: Size(MediaQuery.of(context).size.width - 20, 200.0),
             painter: StockPriceChartPainter(stockPriceHistory),
           ),
         ),
