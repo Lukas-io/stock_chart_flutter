@@ -1,21 +1,23 @@
 class StockData {
   final String stockCode;
-  final String date;
+  final DateTime dateTime;
   final double price;
 
-  StockData({required this.stockCode, required this.date, required this.price});
+  StockData(
+      {required this.stockCode, required this.dateTime, required this.price});
 
   factory StockData.fromJson(Map<String, dynamic> json) {
-    String dateString = json['Date'].split(' ')[0];
+    String dateString = json['Date'];
     // List<String> dateParts = dateString.split('-');
     // int year = int.parse(dateParts[0]);
     // int month = int.parse(dateParts[1]);
     // int day = int.parse(dateParts[2]);
     // DateTime parsedDate = DateTime(year, month, day);
+    DateTime dateTime = DateTime.parse(dateString);
 
     return StockData(
       stockCode: json['StockCode'],
-      date: dateString,
+      dateTime: dateTime,
       price: double.parse(
         json['Price'],
       ),
