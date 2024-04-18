@@ -30,11 +30,11 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
     loadJsonFromAssets();
   }
 
+  List<StockData>? stockPriceHistory;
   @override
   Widget build(BuildContext context) {
     if (data != null) {
-      List<StockData> stockPriceHistory =
-          PriceHistory.fromJson(data!).stockPriceHistory;
+      stockPriceHistory = PriceHistory.fromJson(data!).stockPriceHistory;
 
       return Scaffold(
         appBar: AppBar(
@@ -45,8 +45,22 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
           children: [
             CustomPaint(
               size: Size(MediaQuery.of(context).size.width - 20, 200.0),
-              painter: StockPriceChartPainter(stockPriceHistory),
+              painter: StockPriceChartPainter(stockPriceHistory!),
             ),
+            Row(
+              children: [
+                TextButton(
+                    onPressed: () {
+                      setState(() {
+                        dateRange('5D');
+                      });
+                    },
+                    child: const Text(
+                      '5D',
+                      style: TextStyle(color: Colors.black),
+                    ))
+              ],
+            )
           ],
         ),
       );
@@ -54,6 +68,41 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
       return const Center(
         child: CircularProgressIndicator(),
       );
+    }
+  }
+
+  void dateRange(String range) {
+    List<DateTime> dates = [];
+
+    for (var data in stockPriceHistory!) {
+      dates.add(data.dateTime);
+    }
+    print(dates.length);
+
+    // DateTime maxDate = dates
+    //     .reduce((value, element) => value.isAfter(element) ? value : element);
+    //
+
+    DateTime beginDate = dates.first;
+    DateTime endDate = dates.last;
+
+    switch (range) {
+      case '5D':
+        beginDate = endDate.subtract(const Duration(days: 5));
+        print(beginDate);
+        break;
+    }
+    getStartDateIndex(dates, beginDate);
+  }
+
+  void getStartDateIndex(List<DateTime> dates, DateTime startDate) {
+    int index = 0;
+    for (int i = 0; i > dates.length; i++) {
+      if (startDate.isAtSameMomentAs(dates[i]) || startDate.isAfter(dates[i])) {
+        index = i;
+        print(i);
+        break;
+      }
     }
   }
 }

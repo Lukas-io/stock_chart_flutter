@@ -153,7 +153,6 @@ class StockPriceChartPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     for (int i = 0; i <= yDivisions; i++) {
-      print(maxValue);
       double labelValue = minValue - (i * yDivisionInterval);
       yLabelPainter.text = TextSpan(
         text: labelValue.toStringAsFixed(2),
@@ -163,11 +162,11 @@ class StockPriceChartPainter extends CustomPainter {
       double y = size.height -
           (i * (size.height / yDivisions)) -
           (yLabelPainter.height / 2);
-      yLabelPainter.paint(canvas, Offset(0, y));
+      yLabelPainter.paint(canvas, Offset(10, y));
 
       // Draw grey background behind the text labels
       Rect labelRect = Rect.fromLTWH(
-        -2, // Add some padding to the left side of the text
+        8, // Add some padding to the left side of the text
         y - 2, // Align vertically with the center of the text
         yLabelPainter.width + 6, // Add padding to both sides of the text
         yLabelPainter.height + 4, // Add padding above and below the text
