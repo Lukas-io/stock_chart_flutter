@@ -93,6 +93,46 @@ class StockPriceChartPainter extends CustomPainter {
       chartPath.lineTo(x2, y2);
     }
 
+// Draw dashed line from end of last data point to beginning of screen
+    double lastX = ((dates.last.millisecondsSinceEpoch -
+                minDate.millisecondsSinceEpoch) /
+            (maxDate.millisecondsSinceEpoch - minDate.millisecondsSinceEpoch)) *
+        size.width;
+    double lastY = size.height -
+        ((prices.last - minValue) / (maxValue - minValue)) * size.height;
+
+    Paint dashedLinePaint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    Paint transparentDashedLinePaint = Paint()
+      ..color = Colors.transparent
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
+    double dashPosition = lastX;
+    int dashLength = 5;
+    double stopDashPosition = lastX - dashLength;
+    bool dash = true;
+    while (dashPosition > 0) {
+      if (dash) {
+        canvas.drawLine(Offset(dashPosition, lastY),
+            Offset(stopDashPosition, lastY), dashedLinePaint);
+      } else {
+        canvas.drawLine(Offset(dashPosition, lastY),
+            Offset(stopDashPosition, lastY), transparentDashedLinePaint);
+      }
+
+      dashPosition -= dashLength;
+      stopDashPosition -= dashLength;
+
+      dash = !dash;
+    }
+    canvas.drawCircle(Offset(lastX, lastY), 5, Paint()..color = paintColor);
+
     // Draw a filled area below the line chart using the gradient shader
     chartPath.lineTo(size.width, gradientBottomY);
     chartPath.lineTo(0, gradientBottomY);
@@ -113,26 +153,37 @@ class StockPriceChartPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     for (int i = 0; i <= yDivisions; i++) {
-      double labelValue = minValue + (i * yDivisionInterval);
+      print(maxValue);
+      double labelValue = minValue - (i * yDivisionInterval);
       yLabelPainter.text = TextSpan(
-        text: '${labelValue.toStringAsFixed(2)}',
-        style: TextStyle(color: Colors.black, fontSize: 10),
+        text: labelValue.toStringAsFixed(2),
+        style: const TextStyle(color: Colors.black, fontSize: 12),
       );
       yLabelPainter.layout();
       double y = size.height -
           (i * (size.height / yDivisions)) -
           (yLabelPainter.height / 2);
-      yLabelPainter.paint(canvas, Offset(-yLabelPainter.width - 4, y));
+      yLabelPainter.paint(canvas, Offset(0, y));
 
       // Draw grey background behind the text labels
       Rect labelRect = Rect.fromLTWH(
-        -yLabelPainter.width -
-            8, // Add some padding to the left side of the text
+        -2, // Add some padding to the left side of the text
         y - 2, // Align vertically with the center of the text
-        yLabelPainter.width + 4, // Add padding to both sides of the text
+        yLabelPainter.width + 6, // Add padding to both sides of the text
         yLabelPainter.height + 4, // Add padding above and below the text
       );
-      canvas.drawRect(labelRect, Paint()..color = Colors.grey.withOpacity(0.5));
+      const radius = Radius.circular(8); // Adjust the radius as needed
+      final roundedRect = RRect.fromRectAndCorners(labelRect,
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius);
+
+      final paint = Paint()
+        ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
+        ..style = PaintingStyle.fill;
+
+      canvas.drawRRect(roundedRect, paint);
     }
 
     // Define the number of divisions for the x-axis
@@ -150,8 +201,8 @@ class StockPriceChartPainter extends CustomPainter {
       DateTime divisionDate = DateTime.fromMillisecondsSinceEpoch(
           minDate.millisecondsSinceEpoch + (i * xDivisionInterval).toInt());
       xLabelPainter.text = TextSpan(
-        text: '${divisionDate.toString()}',
-        style: TextStyle(color: Colors.black, fontSize: 10),
+        text: divisionDate.toString(),
+        style: const TextStyle(color: Colors.black, fontSize: 10),
       );
       xLabelPainter.layout();
       double x = (i * (size.width / xDivisions)) - (xLabelPainter.width / 2);

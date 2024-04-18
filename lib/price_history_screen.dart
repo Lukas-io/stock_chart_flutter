@@ -38,17 +38,20 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
 
       return Scaffold(
         appBar: AppBar(
-          title: Text('Stock Price History'),
+          title: const Text('Stock Price History'),
         ),
-        body: Center(
-          child: CustomPaint(
-            size: Size(MediaQuery.of(context).size.width - 20, 200.0),
-            painter: StockPriceChartPainter(stockPriceHistory),
-          ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomPaint(
+              size: Size(MediaQuery.of(context).size.width - 20, 200.0),
+              painter: StockPriceChartPainter(stockPriceHistory),
+            ),
+          ],
         ),
       );
     } else {
-      return Center(
+      return const Center(
         child: CircularProgressIndicator(),
       );
     }
