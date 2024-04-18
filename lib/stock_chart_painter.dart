@@ -18,15 +18,9 @@ class StockPriceChartPainter extends CustomPainter {
             : Colors.green;
 
     // Draw chart axes
-    canvas.drawLine(Offset(0, size.height), Offset(size.width, size.height),
-        gridPaint); // X-axis
-    canvas.drawLine(
-        Offset(0, size.height), const Offset(0, 0), gridPaint); // Y-axis
-    // Draw data points
 
     List<DateTime> dates = [];
     List<double> prices = [];
-    double height = size.height;
 
     for (var data in stockPriceHistory) {
       dates.add(data.dateTime);
@@ -43,24 +37,24 @@ class StockPriceChartPainter extends CustomPainter {
       ..strokeWidth = 2; // Adjust the thickness of the lines as needed
 
     // Define colors for the gradient
-    Color startColor = paintColor.withOpacity(0.3); // Adjust opacity as needed
+    Color startColor = paintColor.withOpacity(0.2); // Adjust opacity as needed
     Color endColor =
-        Colors.transparent; // Fully transparent color at the bottom
+        paintColor.withOpacity(0.01); // Fully transparent color at the bottom
 
     // Calculate the minimum and maximum y-axis values
-    double minValue = prices.reduce((a, b) => a < b ? a : b) + 1;
+    double minValue = prices.reduce((a, b) => a < b ? a : b);
     double maxValue = prices.reduce((a, b) => a > b ? a : b);
 
-    // Define the range for the y-axis (20% to 85%)
-    double minY = (0.2 * (maxValue - minValue)) + minValue;
-    double maxY = (0.85 * (maxValue - minValue)) + minValue;
+    // Calculate the y-coordinate for the bottom of the gradient
+    double gradientBottomY =
+        size.height + (0.1 * size.height); // Adjust the percentage as needed
 
     // Create a gradient shader
     final Shader gradientShader = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: [startColor, endColor],
-    ).createShader(Rect.fromLTRB(0, 0, size.width, size.height));
+    ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
 
     // Create a path for the line chart
     Path chartPath = Path();
@@ -72,7 +66,6 @@ class StockPriceChartPainter extends CustomPainter {
         size.width;
     double y = size.height -
         ((prices.first - minValue) / (maxValue - minValue)) * size.height;
-    chartPath.moveTo(x, y);
     chartPath.moveTo(x, y);
 
     // Draw lines between each pair of consecutive data points
@@ -101,8 +94,8 @@ class StockPriceChartPainter extends CustomPainter {
     }
 
     // Draw a filled area below the line chart using the gradient shader
-    chartPath.lineTo(size.width, height);
-    chartPath.lineTo(0, height);
+    chartPath.lineTo(size.width, gradientBottomY);
+    chartPath.lineTo(0, gradientBottomY);
     chartPath.close();
     canvas.drawPath(
         chartPath,
@@ -110,45 +103,72 @@ class StockPriceChartPainter extends CustomPainter {
           ..shader = gradientShader
           ..style = PaintingStyle.fill);
 
-// Draw dashed line from end of last data point to beginning of screen
-    double lastX = ((dates.last.millisecondsSinceEpoch -
-                minDate.millisecondsSinceEpoch) /
-            (maxDate.millisecondsSinceEpoch - minDate.millisecondsSinceEpoch)) *
-        size.width;
-    double lastY = height -
-        (prices.last / prices.reduce((a, b) => a > b ? a : b)) * height;
+    double minY = (0.2 * (maxValue - minValue)) + minValue;
+    double maxY = (0.85 * (maxValue - minValue)) + minValue;
 
-    Paint dashedLinePaint = Paint()
-      ..color = Colors.grey
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+    // Define the number of divisions for the y-axis
+    int yDivisions = 5;
+    double yDivisionInterval = (maxY - minY) / yDivisions;
 
-    Paint transparentDashedLinePaint = Paint()
-      ..color = Colors.transparent
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
+    // Draw y-axis labels with divisions
+    TextPainter yLabelPainter = TextPainter(
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.ltr,
+    );
+    for (int i = 0; i <= yDivisions; i++) {
+      double labelValue = minY + (i * yDivisionInterval);
+      yLabelPainter.text = TextSpan(
+        text: '${labelValue.toStringAsFixed(2)}',
+        style: TextStyle(color: Colors.black, fontSize: 10),
+      );
+      yLabelPainter.layout();
+      double y = size.height -
+          (i * (size.height / yDivisions)) -
+          (yLabelPainter.height / 2);
+      yLabelPainter.paint(canvas, Offset(-yLabelPainter.width - 4, y));
 
-    double dashPosition = lastX;
-    int dashLength = 5;
-    double stopDashPosition = lastX - dashLength;
-    bool dash = true;
-    while (dashPosition > 0) {
-      if (dash) {
-        canvas.drawLine(Offset(dashPosition, lastY),
-            Offset(stopDashPosition, lastY), dashedLinePaint);
-      } else {
-        canvas.drawLine(Offset(dashPosition, lastY),
-            Offset(stopDashPosition, lastY), transparentDashedLinePaint);
-      }
-
-      dashPosition -= dashLength;
-      stopDashPosition -= dashLength;
-
-      dash = !dash;
+      // Draw grey background behind the text labels
+      Rect labelRect = Rect.fromLTWH(
+        -yLabelPainter.width -
+            8, // Add some padding to the left side of the text
+        y - 2, // Align vertically with the center of the text
+        yLabelPainter.width + 4, // Add padding to both sides of the text
+        yLabelPainter.height + 4, // Add padding above and below the text
+      );
+      canvas.drawRect(labelRect, Paint()..color = Colors.grey.withOpacity(0.5));
     }
-    canvas.drawCircle(Offset(lastX, lastY), 5, Paint()..color = paintColor);
+
+    // Define the number of divisions for the x-axis
+    int xDivisions = 5;
+    double xDivisionInterval =
+        (maxDate.millisecondsSinceEpoch - minDate.millisecondsSinceEpoch) /
+            xDivisions;
+
+    // Draw x-axis labels with divisions
+    TextPainter xLabelPainter = TextPainter(
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+    for (int i = 0; i <= xDivisions; i++) {
+      DateTime divisionDate = DateTime.fromMillisecondsSinceEpoch(
+          minDate.millisecondsSinceEpoch + (i * xDivisionInterval).toInt());
+      xLabelPainter.text = TextSpan(
+        text: '${divisionDate.toString()}',
+        style: TextStyle(color: Colors.black, fontSize: 10),
+      );
+      xLabelPainter.layout();
+      double x = (i * (size.width / xDivisions)) - (xLabelPainter.width / 2);
+      xLabelPainter.paint(canvas, Offset(x, size.height + 4));
+
+      // Draw grey background behind the text labels
+      Rect labelRect = Rect.fromLTWH(
+        x - 2, // Align horizontally with the center of the text
+        size.height + 4, // Add some padding below the text
+        xLabelPainter.width + 4, // Add padding to both sides of the text
+        xLabelPainter.height + 4, // Add padding above and below the text
+      );
+      canvas.drawRect(labelRect, Paint()..color = Colors.grey.withOpacity(0.5));
+    }
   }
 
   @override
