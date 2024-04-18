@@ -103,12 +103,9 @@ class StockPriceChartPainter extends CustomPainter {
           ..shader = gradientShader
           ..style = PaintingStyle.fill);
 
-    double minY = (0.2 * (maxValue - minValue)) + minValue;
-    double maxY = (0.85 * (maxValue - minValue)) + minValue;
-
     // Define the number of divisions for the y-axis
-    int yDivisions = 5;
-    double yDivisionInterval = (maxY - minY) / yDivisions;
+    int yDivisions = 4;
+    double yDivisionInterval = (minValue - maxValue) / yDivisions;
 
     // Draw y-axis labels with divisions
     TextPainter yLabelPainter = TextPainter(
@@ -116,7 +113,7 @@ class StockPriceChartPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     for (int i = 0; i <= yDivisions; i++) {
-      double labelValue = minY + (i * yDivisionInterval);
+      double labelValue = minValue + (i * yDivisionInterval);
       yLabelPainter.text = TextSpan(
         text: '${labelValue.toStringAsFixed(2)}',
         style: TextStyle(color: Colors.black, fontSize: 10),
