@@ -16,6 +16,7 @@ class StockPriceChartPainter extends CustomPainter {
         stockPriceHistory.first.price > stockPriceHistory.last.price
             ? Colors.red
             : Colors.green;
+
     // Draw chart axes
     canvas.drawLine(Offset(0, size.height), Offset(size.width, size.height),
         gridPaint); // X-axis
@@ -25,7 +26,7 @@ class StockPriceChartPainter extends CustomPainter {
 
     List<DateTime> dates = [];
     List<double> prices = [];
-    double height = size.height * 5;
+    double height = size.height;
 
     for (var data in stockPriceHistory) {
       dates.add(data.dateTime);
@@ -41,27 +42,73 @@ class StockPriceChartPainter extends CustomPainter {
       ..color = paintColor
       ..strokeWidth = 2; // Adjust the thickness of the lines as needed
 
-// Iterate over each data point to draw lines between them
+    // Define colors for the gradient
+    Color startColor = paintColor.withOpacity(0.3); // Adjust opacity as needed
+    Color endColor =
+        Colors.transparent; // Fully transparent color at the bottom
+
+    // Calculate the minimum and maximum y-axis values
+    double minValue = prices.reduce((a, b) => a < b ? a : b) + 1;
+    double maxValue = prices.reduce((a, b) => a > b ? a : b);
+
+    // Define the range for the y-axis (20% to 85%)
+    double minY = (0.2 * (maxValue - minValue)) + minValue;
+    double maxY = (0.85 * (maxValue - minValue)) + minValue;
+
+    // Create a gradient shader
+    final Shader gradientShader = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [startColor, endColor],
+    ).createShader(Rect.fromLTRB(0, 0, size.width, size.height));
+
+    // Create a path for the line chart
+    Path chartPath = Path();
+
+    // Move to the first data point
+    double x = ((dates.first.millisecondsSinceEpoch -
+                minDate.millisecondsSinceEpoch) /
+            (maxDate.millisecondsSinceEpoch - minDate.millisecondsSinceEpoch)) *
+        size.width;
+    double y = size.height -
+        ((prices.first - minValue) / (maxValue - minValue)) * size.height;
+    chartPath.moveTo(x, y);
+    chartPath.moveTo(x, y);
+
+    // Draw lines between each pair of consecutive data points
     for (int i = 0; i < dates.length - 1; i++) {
       double x1 =
           ((dates[i].millisecondsSinceEpoch - minDate.millisecondsSinceEpoch) /
                   (maxDate.millisecondsSinceEpoch -
                       minDate.millisecondsSinceEpoch)) *
               size.width;
-      double y1 = height -
-          (prices[i] / prices.reduce((a, b) => a > b ? a : b)) * height;
+      double y1 = size.height -
+          ((prices[i] - minValue) / (maxValue - minValue)) * size.height;
 
       double x2 = ((dates[i + 1].millisecondsSinceEpoch -
                   minDate.millisecondsSinceEpoch) /
               (maxDate.millisecondsSinceEpoch -
                   minDate.millisecondsSinceEpoch)) *
           size.width;
-      double y2 = height -
-          (prices[i + 1] / prices.reduce((a, b) => a > b ? a : b)) * height;
+      double y2 = size.height -
+          ((prices[i + 1] - minValue) / (maxValue - minValue)) * size.height;
 
       // Draw a line between each pair of consecutive data points
       canvas.drawLine(Offset(x1, y1), Offset(x2, y2), chartPaint);
+
+      // Add points to the path for the gradient area
+      chartPath.lineTo(x2, y2);
     }
+
+    // Draw a filled area below the line chart using the gradient shader
+    chartPath.lineTo(size.width, height);
+    chartPath.lineTo(0, height);
+    chartPath.close();
+    canvas.drawPath(
+        chartPath,
+        Paint()
+          ..shader = gradientShader
+          ..style = PaintingStyle.fill);
 
 // Draw dashed line from end of last data point to beginning of screen
     double lastX = ((dates.last.millisecondsSinceEpoch -
@@ -102,40 +149,6 @@ class StockPriceChartPainter extends CustomPainter {
       dash = !dash;
     }
     canvas.drawCircle(Offset(lastX, lastY), 5, Paint()..color = paintColor);
-
-    // Define colors for the gradient
-    Color startColor = paintColor.withOpacity(0.5); // Adjust opacity as needed
-    Color endColor =
-        Colors.transparent; // Fully transparent color at the bottom
-
-    // Create a gradient shader
-    final Shader gradientShader = LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [startColor, endColor],
-    ).createShader(Rect.fromLTRB(0, 0, size.width, size.height));
-
-    Path gradientPath = Path();
-    gradientPath.moveTo(0, size.height); // Start at the bottom-left corner
-
-    // Iterate over each data point to define the path
-    for (int i = 0; i < dates.length; i++) {
-      double x =
-          ((dates[i].millisecondsSinceEpoch - minDate.millisecondsSinceEpoch) /
-                  (maxDate.millisecondsSinceEpoch -
-                      minDate.millisecondsSinceEpoch)) *
-              size.width;
-      double y = height -
-          (prices[i] / prices.reduce((a, b) => a > b ? a : b)) * height;
-      gradientPath.lineTo(x, y);
-// Add line segments to the path
-    }
-    // Draw the filled area below the line chart using the gradient shader
-    canvas.drawPath(
-        gradientPath,
-        Paint()
-          ..shader = gradientShader
-          ..style = PaintingStyle.fill);
   }
 
   @override
