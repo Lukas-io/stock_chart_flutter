@@ -31,10 +31,15 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
   }
 
   List<StockData>? stockPriceHistory;
+  List<StockData>? stockData;
   @override
   Widget build(BuildContext context) {
     if (data != null) {
-      stockPriceHistory = PriceHistory.fromJson(data!).stockPriceHistory;
+      stockData = PriceHistory.fromJson(data!).stockPriceHistory;
+
+      if (stockPriceHistory == null) {
+        stockPriceHistory = stockData;
+      }
 
       return Scaffold(
         appBar: AppBar(
@@ -88,19 +93,18 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
 
     switch (range) {
       case '5D':
-        beginDate = endDate.subtract(const Duration(days: 5));
-        print(beginDate);
+        beginDate = endDate.subtract(const Duration(days: 50));
         break;
     }
-    getStartDateIndex(dates, beginDate);
+    updateDataRange(dates, beginDate);
   }
 
-  void getStartDateIndex(List<DateTime> dates, DateTime startDate) {
-    int index = 0;
-    for (int i = 0; i > dates.length; i++) {
-      if (startDate.isAtSameMomentAs(dates[i]) || startDate.isAfter(dates[i])) {
-        index = i;
-        print(i);
+  void updateDataRange(List<DateTime> dates, DateTime startDate) {
+    for (int i = 0; i < dates.length; i++) {
+      if (startDate.isAtSameMomentAs(dates[i]) ||
+          startDate.isBefore(dates[i])) {
+        print(stockPriceHistory?.length);
+        stockPriceHistory = stockPriceHistory?.sublist(i);
         break;
       }
     }
