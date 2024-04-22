@@ -73,7 +73,6 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
                 ],
               ),
             ),
-            add
           ],
         ),
       );
