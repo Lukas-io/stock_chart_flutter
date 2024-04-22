@@ -152,7 +152,7 @@ class StockPriceChartPainter extends CustomPainter {
       textAlign: TextAlign.right,
       textDirection: TextDirection.ltr,
     );
-    for (int i = 0; i <= yDivisions; i++) {
+    for (int i = 1; i <= yDivisions; i++) {
       double labelValue = minValue - (i * yDivisionInterval);
       yLabelPainter.text = TextSpan(
         text: labelValue.toStringAsFixed(2),
@@ -196,12 +196,13 @@ class StockPriceChartPainter extends CustomPainter {
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
     );
-    for (int i = 0; i <= xDivisions; i++) {
+    for (int i = 1; i < xDivisions; i++) {
       DateTime divisionDate = DateTime.fromMillisecondsSinceEpoch(
           minDate.millisecondsSinceEpoch + (i * xDivisionInterval).toInt());
+      String date = divisionDate.toString().split(' ')[0];
       xLabelPainter.text = TextSpan(
-        text: divisionDate.toString(),
-        style: const TextStyle(color: Colors.black, fontSize: 10),
+        text: date.toString(),
+        style: const TextStyle(color: Colors.black, fontSize: 12),
       );
       xLabelPainter.layout();
       double x = (i * (size.width / xDivisions)) - (xLabelPainter.width / 2);
@@ -210,11 +211,22 @@ class StockPriceChartPainter extends CustomPainter {
       // Draw grey background behind the text labels
       Rect labelRect = Rect.fromLTWH(
         x - 2, // Align horizontally with the center of the text
-        size.height + 4, // Add some padding below the text
-        xLabelPainter.width + 4, // Add padding to both sides of the text
-        xLabelPainter.height + 4, // Add padding above and below the text
+        size.height + 1, // Add some padding below the text
+        xLabelPainter.width + 6, // Add padding to both sides of the text
+        xLabelPainter.height + 6, // Add padding above and below the text
       );
-      canvas.drawRect(labelRect, Paint()..color = Colors.grey.withOpacity(0.5));
+      const radius = Radius.circular(8); // Adjust the radius as needed
+      final roundedRect = RRect.fromRectAndCorners(labelRect,
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius);
+
+      final paint = Paint()
+        ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
+        ..style = PaintingStyle.fill;
+
+      // canvas.drawRRect(roundedRect, paint);
     }
   }
 

@@ -37,9 +37,8 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
     if (data != null) {
       stockData = PriceHistory.fromJson(data!).stockPriceHistory;
 
-      if (stockPriceHistory == null) {
-        stockPriceHistory = stockData;
-      }
+      stockPriceHistory ??= stockData;
+      bool add = false;
 
       return Scaffold(
         appBar: AppBar(
@@ -47,25 +46,34 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomPaint(
-              size: Size(MediaQuery.of(context).size.width - 20, 200.0),
+              size: Size(MediaQuery.of(context).size.width - 10, 300.0),
               painter: StockPriceChartPainter(stockPriceHistory!),
             ),
-            Row(
-              children: [
-                TextButton(
-                    onPressed: () {
-                      setState(() {
-                        dateRange('5D');
-                      });
-                    },
-                    child: const Text(
-                      '5D',
-                      style: TextStyle(color: Colors.black),
-                    ))
-              ],
-            )
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 30.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  rangeButton(
+                    '5D',
+                  ),
+                  rangeButton('2W'),
+                  rangeButton('1M'),
+                  rangeButton('3M'),
+                  rangeButton('6M'),
+                  rangeButton('YTD'),
+                  rangeButton('1Y'),
+                  rangeButton('5Y'),
+                  rangeButton('All'),
+                ],
+              ),
+            ),
+            add
           ],
         ),
       );
@@ -76,13 +84,33 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
     }
   }
 
+  GestureDetector rangeButton(String range, {bool? add}) {
+    return GestureDetector(
+        onTap: () {
+          setState(() {
+            dateRange(range);
+            add = true;
+          });
+        },
+        child: Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey.withOpacity(0.5)),
+          child: Text(
+            range,
+            style: const TextStyle(color: Colors.black),
+          ),
+        ));
+  }
+
   void dateRange(String range) {
     List<DateTime> dates = [];
 
     for (var data in stockPriceHistory!) {
       dates.add(data.dateTime);
     }
-    print(dates.length);
 
     // DateTime maxDate = dates
     //     .reduce((value, element) => value.isAfter(element) ? value : element);
@@ -93,17 +121,41 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
 
     switch (range) {
       case '5D':
+        beginDate = endDate.subtract(const Duration(days: 5));
+        break;
+      case '2W':
+        beginDate = endDate.subtract(const Duration(days: 14));
+        break;
+      case '1M':
+        beginDate = endDate.subtract(const Duration(days: 30));
+        break;
+      case '3M':
+        beginDate = endDate.subtract(const Duration(days: 91));
+        break;
+      case '6M':
+        beginDate = endDate.subtract(const Duration(days: 183));
+        break;
+      case 'YTD':
+        DateTime jan1 = DateTime(endDate.year, 1, 1);
+        int daysFromJan1 = endDate.difference(jan1).inDays;
+        beginDate = endDate.subtract(Duration(days: daysFromJan1));
+        break;
+      case '1Y':
+        beginDate = endDate.subtract(const Duration(days: 365));
+        break;
+      case '5Y':
+        beginDate = endDate.subtract(const Duration(days: 1825));
+        break;
+      case 'All':
         beginDate = endDate.subtract(const Duration(days: 50));
         break;
+      default:
+        break;
     }
-    updateDataRange(dates, beginDate);
-  }
-
-  void updateDataRange(List<DateTime> dates, DateTime startDate) {
+    print(beginDate);
     for (int i = 0; i < dates.length; i++) {
-      if (startDate.isAtSameMomentAs(dates[i]) ||
-          startDate.isBefore(dates[i])) {
-        print(stockPriceHistory?.length);
+      if (beginDate.isAtSameMomentAs(dates[i]) ||
+          beginDate.isBefore(dates[i])) {
         stockPriceHistory = stockPriceHistory?.sublist(i);
         break;
       }
