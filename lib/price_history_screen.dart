@@ -32,13 +32,17 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
 
   List<StockData>? stockPriceHistory;
   List<StockData>? stockData;
+  bool updated = false;
+
   @override
   Widget build(BuildContext context) {
+    print('updated');
     if (data != null) {
       stockData = PriceHistory.fromJson(data!).stockPriceHistory;
 
-      stockPriceHistory ??= stockData;
-      bool add = false;
+      if (!updated) {
+        stockPriceHistory = stockData;
+      }
 
       return Scaffold(
         appBar: AppBar(
@@ -77,9 +81,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         ),
       );
     } else {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
+      return const CircularProgressIndicator();
     }
   }
 
@@ -88,7 +90,6 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         onTap: () {
           setState(() {
             dateRange(range);
-            add = true;
           });
         },
         child: Container(
@@ -107,13 +108,9 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
   void dateRange(String range) {
     List<DateTime> dates = [];
 
-    for (var data in stockPriceHistory!) {
+    for (var data in stockData!) {
       dates.add(data.dateTime);
     }
-
-    // DateTime maxDate = dates
-    //     .reduce((value, element) => value.isAfter(element) ? value : element);
-    //
 
     DateTime beginDate = dates.first;
     DateTime endDate = dates.last;
@@ -146,8 +143,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         beginDate = endDate.subtract(const Duration(days: 1825));
         break;
       case 'All':
-        beginDate = endDate.subtract(const Duration(days: 50));
-        break;
+
       default:
         break;
     }
@@ -155,7 +151,9 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
     for (int i = 0; i < dates.length; i++) {
       if (beginDate.isAtSameMomentAs(dates[i]) ||
           beginDate.isBefore(dates[i])) {
-        stockPriceHistory = stockPriceHistory?.sublist(i);
+        stockPriceHistory = stockData?.sublist(i);
+        updated = true;
+        print(stockPriceHistory?.length);
         break;
       }
     }

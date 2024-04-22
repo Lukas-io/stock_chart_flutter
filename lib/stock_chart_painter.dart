@@ -232,6 +232,6 @@ class StockPriceChartPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return false; // No need to repaint since the chart is static
+    return true; // No need to repaint since the chart is static
   }
 }
