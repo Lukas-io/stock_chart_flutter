@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:stock_chart_flutter/price_history_model.dart';
 
@@ -44,6 +46,10 @@ class StockPriceChartPainter extends CustomPainter {
     // Calculate the minimum and maximum y-axis values
     double minValue = prices.reduce((a, b) => a < b ? a : b);
     double maxValue = prices.reduce((a, b) => a > b ? a : b);
+    if (minValue == maxValue) {
+      minValue /= 2;
+      maxValue *= 1.5;
+    }
 
     // Calculate the y-coordinate for the bottom of the gradient
     double gradientBottomY =
@@ -143,30 +149,72 @@ class StockPriceChartPainter extends CustomPainter {
           ..shader = gradientShader
           ..style = PaintingStyle.fill);
 
-    // Define the number of divisions for the y-axis
-    int yDivisions = 4;
-    double yDivisionInterval = (minValue - maxValue) / yDivisions;
-
     // Draw y-axis labels with divisions
     TextPainter yLabelPainter = TextPainter(
       textAlign: TextAlign.right,
       textDirection: TextDirection.ltr,
     );
-    for (int i = 1; i <= yDivisions; i++) {
-      double labelValue = minValue - (i * yDivisionInterval);
+
+    double difference = maxValue - minValue;
+    String standardForm = difference.toStringAsExponential();
+
+    int? secondSignificantNumber = int.tryParse(standardForm[2]);
+    bool rounded = secondSignificantNumber != null
+        ? secondSignificantNumber >= 5
+            ? true
+            : false
+        : false;
+
+    // Rounding the number up (works with decimals also). To get the first significant value.
+    double significantValue = rounded
+        ? double.parse(standardForm[0]) + 1
+        : double.parse(standardForm[0]);
+    // print(rounded);
+    List<String> parts = standardForm.split('e');
+    int power = int.parse(parts[1]);
+
+    double differenceDivision = significantValue * pow(10, power);
+    int significantDifferenceNumber =
+        int.parse(differenceDivision.toStringAsExponential()[0]);
+    int yDivisions = significantDifferenceNumber % 3 == 0 ? 3 : 2;
+    print(yDivisions);
+    double yDivisionInterval = differenceDivision / yDivisions;
+
+    String strRoundedMinValue = minValue > 1
+        ? minValue.round().toStringAsFixed(1)
+        : minValue.toStringAsFixed(6);
+    double roundedMinValue = differenceDivision < 1
+        ? double.parse(strRoundedMinValue.substring(
+            0, getTH(differenceDivision.toString()) + 3))
+        : double.parse(strRoundedMinValue.substring(
+                0,
+                strRoundedMinValue.length -
+                    (differenceDivision.toString().length - 2))) *
+            pow(10, power - 1);
+    print(roundedMinValue);
+    print(strRoundedMinValue);
+    print(minValue);
+    print(getTH(differenceDivision.toString()));
+    print(differenceDivision);
+
+    for (int i = 0; i <= yDivisions; i++) {
+      double labelValue = roundedMinValue + (i * yDivisionInterval);
       yLabelPainter.text = TextSpan(
-        text: labelValue.toStringAsFixed(2),
+        text: labelValue < 1
+            ? labelValue
+                .toStringAsFixed(getTH(differenceDivision.toString()) + 2)
+            : labelValue.toStringAsFixed(0),
         style: const TextStyle(color: Colors.black, fontSize: 12),
       );
       yLabelPainter.layout();
       double y = size.height -
-          (i * (size.height / yDivisions)) -
+          ((labelValue - minValue) / (maxValue - minValue)) * size.height -
           (yLabelPainter.height / 2);
       yLabelPainter.paint(canvas, Offset(10, y));
 
       // Draw grey background behind the text labels
       Rect labelRect = Rect.fromLTWH(
-        8, // Add some padding to the left side of the text
+        7, // Add some padding to the left side of the text
         y - 2, // Align vertically with the center of the text
         yLabelPainter.width + 6, // Add padding to both sides of the text
         yLabelPainter.height + 4, // Add padding above and below the text
@@ -206,7 +254,7 @@ class StockPriceChartPainter extends CustomPainter {
       );
       xLabelPainter.layout();
       double x = (i * (size.width / xDivisions)) - (xLabelPainter.width / 2);
-      xLabelPainter.paint(canvas, Offset(x, size.height + 4));
+      xLabelPainter.paint(canvas, Offset(x, size.height + 42));
 
       // Draw grey background behind the text labels
       Rect labelRect = Rect.fromLTWH(
@@ -233,5 +281,13 @@ class StockPriceChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true; // No need to repaint since the chart is static
+  }
+
+  int getTH(String value) {
+    int count = 0;
+    while (value[count] == '0') {
+      count++;
+    }
+    return count;
   }
 }

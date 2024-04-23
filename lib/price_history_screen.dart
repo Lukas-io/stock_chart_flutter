@@ -52,9 +52,13 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomPaint(
-              size: Size(MediaQuery.of(context).size.width - 10, 300.0),
-              painter: StockPriceChartPainter(stockPriceHistory!),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 0, vertical: 40.0),
+              child: CustomPaint(
+                size: Size(MediaQuery.of(context).size.width - 10, 200.0),
+                painter: StockPriceChartPainter(stockPriceHistory!),
+              ),
             ),
             Padding(
               padding:
@@ -147,13 +151,12 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
       default:
         break;
     }
-    print(beginDate);
+
     for (int i = 0; i < dates.length; i++) {
       if (beginDate.isAtSameMomentAs(dates[i]) ||
           beginDate.isBefore(dates[i])) {
         stockPriceHistory = stockData?.sublist(i);
         updated = true;
-        print(stockPriceHistory?.length);
         break;
       }
     }
