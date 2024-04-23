@@ -177,20 +177,16 @@ class StockPriceChartPainter extends CustomPainter {
     int significantDifferenceNumber =
         int.parse(differenceDivision.toStringAsExponential()[0]);
     int yDivisions = significantDifferenceNumber % 3 == 0 ? 3 : 2;
-    print(yDivisions);
     double yDivisionInterval = differenceDivision / yDivisions;
 
     String strRoundedMinValue = minValue > 1
         ? minValue.round().toStringAsFixed(1)
         : minValue.toStringAsFixed(6);
     double roundedMinValue = differenceDivision < 1
-        ? double.parse(strRoundedMinValue.substring(
-            0, getTH(differenceDivision.toString()) + 3))
+        ? double.parse(strRoundedMinValue.substring(0, power.abs() + 1))
         : double.parse(strRoundedMinValue.substring(
-                0,
-                strRoundedMinValue.length -
-                    (differenceDivision.toString().length - 2))) *
-            pow(10, power - 1);
+                0, strRoundedMinValue.length - (power))) *
+            pow(10, power);
     print(roundedMinValue);
     print(strRoundedMinValue);
     print(minValue);
