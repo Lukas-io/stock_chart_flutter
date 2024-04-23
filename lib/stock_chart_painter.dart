@@ -183,23 +183,21 @@ class StockPriceChartPainter extends CustomPainter {
         ? minValue.round().toStringAsFixed(1)
         : minValue.toStringAsFixed(6);
     double roundedMinValue = differenceDivision < 1
-        ? double.parse(strRoundedMinValue.substring(0, power.abs() + 1))
+        ? double.parse(strRoundedMinValue.substring(0, power.abs() + 2))
         : double.parse(strRoundedMinValue.substring(
                 0, strRoundedMinValue.length - (power))) *
             pow(10, power);
     print(roundedMinValue);
     print(strRoundedMinValue);
     print(minValue);
-    print(getTH(differenceDivision.toString()));
     print(differenceDivision);
 
     for (int i = 0; i <= yDivisions; i++) {
       double labelValue = roundedMinValue + (i * yDivisionInterval);
       yLabelPainter.text = TextSpan(
         text: labelValue < 1
-            ? labelValue
-                .toStringAsFixed(getTH(differenceDivision.toString()) + 2)
-            : labelValue.toStringAsFixed(0),
+            ? labelValue.toStringAsFixed(power.abs() + 2)
+            : differenceDivision < 1 ? labelValue.toString(),
         style: const TextStyle(color: Colors.black, fontSize: 12),
       );
       yLabelPainter.layout();
@@ -277,13 +275,5 @@ class StockPriceChartPainter extends CustomPainter {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return true; // No need to repaint since the chart is static
-  }
-
-  int getTH(String value) {
-    int count = 0;
-    while (value[count] == '0') {
-      count++;
-    }
-    return count;
   }
 }
