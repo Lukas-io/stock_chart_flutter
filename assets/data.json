@@ -5,776 +5,745 @@
     "data": {
         "stock_price_history": [
             {
-                "StockCode": "ASI",
-                "Date": "2022-04-15 00:00:00.000",
-                "Price": "47510.3800"
-            },
-            {
-                "StockCode": "ASI",
-                "Date": "2022-04-18 00:00:00.000",
-                "Price": "47510.3800"
-            },
-            {
-                "StockCode": "ASI",
-                "Date": "2022-04-19 00:00:00.000",
-                "Price": "47545.8600"
-            },
-            {
-                "StockCode": "ASI",
-                "Date": "2022-04-20 00:00:00.000",
-                "Price": "48138.7100"
-            },
-            {
-                "StockCode": "ASI",
-                "Date": "2022-04-21 00:00:00.000",
-                "Price": "48223.8600"
-            },
-            {
-                "StockCode": "ASI",
-                "Date": "2022-04-22 00:00:00.000",
-                "Price": "48459.6500"
-            },
-            {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-04-25 00:00:00.000",
-                "Price": "48558.9100"
+                "Price": "3.7400"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-04-26 00:00:00.000",
-                "Price": "48568.5700"
+                "Price": "3.6200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-04-27 00:00:00.000",
-                "Price": "48571.7500"
+                "Price": "3.5900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-04-28 00:00:00.000",
-                "Price": "48837.7600"
+                "Price": "3.6000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-04-29 00:00:00.000",
-                "Price": "49638.9400"
+                "Price": "3.8800"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-02 00:00:00.000",
-                "Price": "49638.9400"
+                "Price": "3.8800"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-03 00:00:00.000",
-                "Price": "49638.9400"
+                "Price": "3.8800"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-04 00:00:00.000",
-                "Price": "50126.4100"
+                "Price": "3.6500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-05 00:00:00.000",
-                "Price": "50835.9500"
+                "Price": "3.5300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-06 00:00:00.000",
-                "Price": "50937.0100"
+                "Price": "3.6000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-09 00:00:00.000",
-                "Price": "51903.4400"
+                "Price": "3.6000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-10 00:00:00.000",
-                "Price": "51805.4100"
+                "Price": "3.6000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-11 00:00:00.000",
-                "Price": "52838.4500"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-12 00:00:00.000",
-                "Price": "52917.7600"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-13 00:00:00.000",
-                "Price": "53100.2100"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-16 00:00:00.000",
-                "Price": "52944.6500"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-17 00:00:00.000",
-                "Price": "52756.6200"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-18 00:00:00.000",
-                "Price": "52721.3400"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-19 00:00:00.000",
-                "Price": "53275.4900"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-20 00:00:00.000",
-                "Price": "52979.9600"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-23 00:00:00.000",
-                "Price": "52911.5100"
+                "Price": "3.4000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-24 00:00:00.000",
-                "Price": "51949.6400"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-25 00:00:00.000",
-                "Price": "52591.4100"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-26 00:00:00.000",
-                "Price": "53151.3200"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-27 00:00:00.000",
-                "Price": "54085.3000"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-30 00:00:00.000",
-                "Price": "53772.3500"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-05-31 00:00:00.000",
-                "Price": "53637.1400"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-01 00:00:00.000",
-                "Price": "52974.1500"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-02 00:00:00.000",
-                "Price": "52840.1400"
+                "Price": "3.2700"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-03 00:00:00.000",
-                "Price": "52908.2400"
+                "Price": "3.2700"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-06 00:00:00.000",
-                "Price": "53086.8600"
+                "Price": "3.2700"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-07 00:00:00.000",
-                "Price": "53270.8800"
+                "Price": "3.2500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-08 00:00:00.000",
-                "Price": "53193.9800"
+                "Price": "3.2500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-09 00:00:00.000",
-                "Price": "53170.7300"
+                "Price": "3.2500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-10 00:00:00.000",
-                "Price": "53201.3800"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-13 00:00:00.000",
-                "Price": "53201.3800"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-14 00:00:00.000",
-                "Price": "53114.6500"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-15 00:00:00.000",
-                "Price": "52775.4000"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-16 00:00:00.000",
-                "Price": "52411.0900"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-17 00:00:00.000",
-                "Price": "51778.0800"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-20 00:00:00.000",
-                "Price": "50756.7400"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-21 00:00:00.000",
-                "Price": "51091.7500"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-22 00:00:00.000",
-                "Price": "51377.2100"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-23 00:00:00.000",
-                "Price": "51618.7300"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-24 00:00:00.000",
-                "Price": "51705.6100"
+                "Price": "3.3000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-27 00:00:00.000",
-                "Price": "51962.8500"
+                "Price": "3.3000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-28 00:00:00.000",
-                "Price": "51803.9800"
+                "Price": "3.3000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-29 00:00:00.000",
-                "Price": "51802.4800"
+                "Price": "3.3000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-06-30 00:00:00.000",
-                "Price": "51817.5900"
+                "Price": "3.4600"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-01 00:00:00.000",
-                "Price": "51829.6700"
+                "Price": "3.4600"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-04 00:00:00.000",
-                "Price": "51791.4500"
+                "Price": "3.4600"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-05 00:00:00.000",
-                "Price": "51586.5000"
+                "Price": "3.2400"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-06 00:00:00.000",
-                "Price": "51556.5400"
+                "Price": "3.2400"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-07 00:00:00.000",
-                "Price": "51563.7300"
+                "Price": "3.2000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-08 00:00:00.000",
-                "Price": "51557.4100"
+                "Price": "3.2000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-13 00:00:00.000",
-                "Price": "51567.6900"
+                "Price": "3.0300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-14 00:00:00.000",
-                "Price": "51338.2700"
+                "Price": "3.0300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-15 00:00:00.000",
-                "Price": "52215.1200"
+                "Price": "3.0000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-18 00:00:00.000",
-                "Price": "52319.9400"
+                "Price": "3.0300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-19 00:00:00.000",
-                "Price": "52308.8800"
+                "Price": "3.0500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-20 00:00:00.000",
-                "Price": "52186.5200"
+                "Price": "3.0700"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-21 00:00:00.000",
-                "Price": "52122.0000"
+                "Price": "3.0200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-22 00:00:00.000",
-                "Price": "51979.9200"
+                "Price": "3.0200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-25 00:00:00.000",
-                "Price": "51400.5300"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-26 00:00:00.000",
-                "Price": "50442.3700"
+                "Price": "3.0000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-27 00:00:00.000",
-                "Price": "50188.5500"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-28 00:00:00.000",
-                "Price": "49667.1400"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-07-29 00:00:00.000",
-                "Price": "50320.9900"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-01 00:00:00.000",
-                "Price": "49950.3200"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-02 00:00:00.000",
-                "Price": "50626.0400"
+                "Price": "3.0500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-03 00:00:00.000",
-                "Price": "50594.9700"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-04 00:00:00.000",
-                "Price": "50582.3000"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-05 00:00:00.000",
-                "Price": "50722.3300"
+                "Price": "3.1100"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-08 00:00:00.000",
-                "Price": "50489.7300"
+                "Price": "3.0500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-09 00:00:00.000",
-                "Price": "49350.7100"
+                "Price": "3.0500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-10 00:00:00.000",
-                "Price": "50075.4700"
+                "Price": "3.0500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-11 00:00:00.000",
-                "Price": "50014.6000"
+                "Price": "3.3500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-12 00:00:00.000",
-                "Price": "49664.0700"
+                "Price": "3.3500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-15 00:00:00.000",
-                "Price": "49657.3300"
+                "Price": "3.4900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-16 00:00:00.000",
-                "Price": "49709.4600"
+                "Price": "3.4400"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-17 00:00:00.000",
-                "Price": "49691.1700"
+                "Price": "3.4400"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-18 00:00:00.000",
-                "Price": "49546.3800"
+                "Price": "3.4400"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-19 00:00:00.000",
-                "Price": "49370.6200"
+                "Price": "3.2000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-22 00:00:00.000",
-                "Price": "49346.4000"
+                "Price": "3.2000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-23 00:00:00.000",
-                "Price": "48567.1400"
+                "Price": "3.2000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-24 00:00:00.000",
-                "Price": "48675.3300"
+                "Price": "3.1300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-25 00:00:00.000",
-                "Price": "49661.8700"
+                "Price": "3.0200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-26 00:00:00.000",
-                "Price": "49682.1500"
+                "Price": "3.2000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-29 00:00:00.000",
-                "Price": "49676.7500"
+                "Price": "3.2000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-30 00:00:00.000",
-                "Price": "49642.6900"
+                "Price": "3.0700"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-08-31 00:00:00.000",
-                "Price": "49836.5100"
+                "Price": "3.0500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-01 00:00:00.000",
-                "Price": "49889.8800"
+                "Price": "3.2000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-02 00:00:00.000",
-                "Price": "50045.8300"
+                "Price": "3.4900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-05 00:00:00.000",
-                "Price": "49991.4100"
+                "Price": "3.4900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-06 00:00:00.000",
-                "Price": "49644.9200"
+                "Price": "3.4900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-07 00:00:00.000",
-                "Price": "49635.7600"
+                "Price": "3.2100"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-08 00:00:00.000",
-                "Price": "49652.2500"
+                "Price": "3.3000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-09 00:00:00.000",
-                "Price": "49323.90"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-12 00:00:00.000",
-                "Price": "49626.0500"
+                "Price": "3.3000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-13 00:00:00.000",
-                "Price": "49627.7200"
+                "Price": "3.2000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-14 00:00:00.000",
-                "Price": "49576.0500"
+                "Price": "3.2300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-15 00:00:00.000",
-                "Price": "49540.4800"
+                "Price": "3.2300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-16 00:00:00.000",
-                "Price": "49475.4200"
+                "Price": "3.2300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-19 00:00:00.000",
-                "Price": "49440.2100"
+                "Price": "3.2300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-20 00:00:00.000",
-                "Price": "49445.3100"
+                "Price": "3.2300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-21 00:00:00.000",
-                "Price": "49421.9100"
+                "Price": "3.2300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-22 00:00:00.000",
-                "Price": "49190.3400"
+                "Price": "3.2300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-23 00:00:00.000",
-                "Price": "49026.6200"
+                "Price": "3.2400"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-26 00:00:00.000",
-                "Price": "49218.3500"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-27 00:00:00.000",
-                "Price": "49161.4500"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-28 00:00:00.000",
-                "Price": "49171.7000"
+                "Price": "3.5000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-29 00:00:00.000",
-                "Price": "48964.8300"
+                "Price": "3.2900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-09-30 00:00:00.000",
-                "Price": "49024.1600"
+                "Price": "3.2900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-04 00:00:00.000",
-                "Price": "48879.7400"
+                "Price": "3.2900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-05 00:00:00.000",
-                "Price": "48836.7000"
+                "Price": "3.1300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-06 00:00:00.000",
-                "Price": "47260.8900"
+                "Price": "3.2500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-07 00:00:00.000",
-                "Price": "47351.4300"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-11 00:00:00.000",
-                "Price": "47565.9200"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-12 00:00:00.000",
-                "Price": "47531.8400"
+                "Price": "3.1200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-13 00:00:00.000",
-                "Price": "47524.3800"
+                "Price": "3.1000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-14 00:00:00.000",
-                "Price": "47569.0400"
+                "Price": "3.1200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-17 00:00:00.000",
-                "Price": "47365.9500"
+                "Price": "3.1200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-18 00:00:00.000",
-                "Price": "47366.3200"
+                "Price": "3.1500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-19 00:00:00.000",
-                "Price": "47318.1500"
+                "Price": "3.2400"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-20 00:00:00.000",
-                "Price": "47332.2100"
+                "Price": "3.2400"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-21 00:00:00.000",
-                "Price": "47396.7300"
+                "Price": "3.2600"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-24 00:00:00.000",
-                "Price": "47461.6300"
+                "Price": "3.2600"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-25 00:00:00.000",
-                "Price": "47788.1400"
+                "Price": "3.2600"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-26 00:00:00.000",
-                "Price": "47859.7800"
+                "Price": "3.2600"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-27 00:00:00.000",
-                "Price": "47625.1800"
+                "Price": "3.3200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-28 00:00:00.000",
-                "Price": "46912.6400"
+                "Price": "3.3200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-10-31 00:00:00.000",
-                "Price": "46839.0800"
+                "Price": "3.3200"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-01 00:00:00.000",
-                "Price": "46745.7300"
+                "Price": "3.4300"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-02 00:00:00.000",
-                "Price": "47283.0200"
+                "Price": "3.4000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-03 00:00:00.000",
-                "Price": "47236.7000"
+                "Price": "3.4000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-04 00:00:00.000",
-                "Price": "47269.1800"
+                "Price": "3.4000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-07 00:00:00.000",
-                "Price": "47269.4300"
+                "Price": "3.4000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-08 00:00:00.000",
-                "Price": "46561.6000"
+                "Price": "3.3900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-09 00:00:00.000",
-                "Price": "46577.4800"
+                "Price": "3.3900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-10 00:00:00.000",
-                "Price": "46942.8200"
+                "Price": "3.3900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-11 00:00:00.000",
-                "Price": "46968.7500"
+                "Price": "3.3900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-14 00:00:00.000",
-                "Price": "46818.1200"
+                "Price": "3.3900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-15 00:00:00.000",
-                "Price": "46908.2500"
+                "Price": "3.3000"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-16 00:00:00.000",
-                "Price": "47050.4400"
+                "Price": "3.2900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-17 00:00:00.000",
-                "Price": "47011.2200"
+                "Price": "3.2900"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-18 00:00:00.000",
-                "Price": "47492.7300"
+                "Price": "3.2500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-21 00:00:00.000",
-                "Price": "47701.8400"
+                "Price": "3.2500"
             },
             {
-                "StockCode": "ASI",
+                "StockCode": "FCMB",
                 "Date": "2022-11-22 00:00:00.000",
-                "Price": "47850.2300"
+                "Price": "3.2500"
             }
-
         ]
     }
 }

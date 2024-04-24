@@ -172,34 +172,48 @@ class StockPriceChartPainter extends CustomPainter {
     // print(rounded);
     List<String> parts = standardForm.split('e');
     int power = int.parse(parts[1]);
-
     double differenceDivision = significantValue * pow(10, power);
     int significantDifferenceNumber =
         int.parse(differenceDivision.toStringAsExponential()[0]);
     int yDivisions = significantDifferenceNumber % 3 == 0 ? 3 : 2;
     double yDivisionInterval = differenceDivision / yDivisions;
+    bool muchDifference =
+        int.parse(differenceDivision.toStringAsExponential()[0]) > yDivisions
+            ? true
+            : false;
 
-    String strRoundedMinValue = minValue > 1
-        ? minValue.round().toStringAsFixed(1)
-        : minValue.toStringAsFixed(6);
+    int differenceLength = findDifferenceLength(minValue, maxValue);
+
+    String strRoundedMinValue = minValue.toString();
     double roundedMinValue = differenceDivision < 1
-        ? double.parse(strRoundedMinValue.substring(0, power.abs() + 2))
-        : double.parse(strRoundedMinValue.substring(
-                0, strRoundedMinValue.length - (power))) *
-            pow(10, power);
+        ? muchDifference
+            ? double.parse(minValue.toStringAsPrecision(differenceLength + 1))
+            : double.parse(minValue.toStringAsPrecision(differenceLength + 2))
+        : muchDifference
+            ? double.parse(minValue.toStringAsPrecision(differenceLength + 1))
+            : double.parse(minValue.toStringAsPrecision(differenceLength + 1));
+
+    print(power);
+
     print(roundedMinValue);
-    print(strRoundedMinValue);
     print(minValue);
+    print(maxValue);
+    print(muchDifference);
+    print(differenceLength);
+    print(strRoundedMinValue);
     print(differenceDivision);
 
+    int fixedDecimalPoint =
+        getFixedDecimalPoints(yDivisions, differenceDivision, power);
     for (int i = 0; i <= yDivisions; i++) {
       double labelValue = roundedMinValue + (i * yDivisionInterval);
       yLabelPainter.text = TextSpan(
-        text: labelValue < 1
-            ? labelValue.toStringAsFixed(power.abs() + 2)
-            : differenceDivision < 1 ? labelValue.toString(),
+        text: !muchDifference && differenceDivision < 1
+            ? labelValue.toStringAsFixed(fixedDecimalPoint + 1)
+            : labelValue.toStringAsFixed(fixedDecimalPoint),
         style: const TextStyle(color: Colors.black, fontSize: 12),
       );
+      print(fixedDecimalPoint);
       yLabelPainter.layout();
       double y = size.height -
           ((labelValue - minValue) / (maxValue - minValue)) * size.height -
@@ -270,6 +284,42 @@ class StockPriceChartPainter extends CustomPainter {
 
       // canvas.drawRRect(roundedRect, paint);
     }
+  }
+
+  int findDifferenceLength(double min, double max) {
+    int count = 0;
+    String strMin = min.toString();
+    String strMax = max.toString();
+
+    while (strMin[count] == strMax[count]) {
+      count++;
+    }
+
+    count = count == 0 ? 1 : count;
+
+    return count;
+  }
+
+  int getFixedDecimalPoints(int yDivisions, double difference, int power) {
+    //FOR DIFFERENCE GREATER THAN 1.
+    if (power < 0) {
+      return power.abs();
+    }
+    int points = 0;
+
+    double division = difference / yDivisions;
+    String strDivision = division.toString();
+
+    if (strDivision.contains('.')) {
+      List<String> strDivisions = strDivision.split('.');
+
+      while (strDivisions[1][points] != '0') {
+        points++;
+        if (strDivisions[1].length >= points) break;
+      }
+    }
+
+    return points;
   }
 
   @override
