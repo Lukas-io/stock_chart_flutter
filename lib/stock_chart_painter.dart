@@ -184,27 +184,13 @@ class StockPriceChartPainter extends CustomPainter {
 
     int differenceLength = findDifferenceLength(minValue, maxValue);
 
-    String strRoundedMinValue = minValue.toString();
-    double roundedMinValue = differenceDivision < 1
-        ? muchDifference
-            ? double.parse(minValue.toStringAsPrecision(differenceLength + 1))
-            : double.parse(minValue.toStringAsPrecision(differenceLength + 2))
-        : muchDifference
-            ? double.parse(minValue.toStringAsPrecision(differenceLength + 1))
-            : double.parse(minValue.toStringAsPrecision(differenceLength + 1));
-
-    print(power);
-
-    print(roundedMinValue);
-    print(minValue);
-    print(maxValue);
-    print(muchDifference);
-    print(differenceLength);
-    print(strRoundedMinValue);
-    print(differenceDivision);
+    double roundedMinValue = muchDifference
+        ? double.parse(minValue.toStringAsPrecision(differenceLength + 1))
+        : double.parse(minValue.toStringAsPrecision(differenceLength + 2));
 
     int fixedDecimalPoint =
         getFixedDecimalPoints(yDivisions, differenceDivision, power);
+
     for (int i = 0; i <= yDivisions; i++) {
       double labelValue = roundedMinValue + (i * yDivisionInterval);
       yLabelPainter.text = TextSpan(
@@ -213,7 +199,6 @@ class StockPriceChartPainter extends CustomPainter {
             : labelValue.toStringAsFixed(fixedDecimalPoint),
         style: const TextStyle(color: Colors.black, fontSize: 12),
       );
-      print(fixedDecimalPoint);
       yLabelPainter.layout();
       double y = size.height -
           ((labelValue - minValue) / (maxValue - minValue)) * size.height -
@@ -265,22 +250,22 @@ class StockPriceChartPainter extends CustomPainter {
       xLabelPainter.paint(canvas, Offset(x, size.height + 42));
 
       // Draw grey background behind the text labels
-      Rect labelRect = Rect.fromLTWH(
-        x - 2, // Align horizontally with the center of the text
-        size.height + 1, // Add some padding below the text
-        xLabelPainter.width + 6, // Add padding to both sides of the text
-        xLabelPainter.height + 6, // Add padding above and below the text
-      );
-      const radius = Radius.circular(8); // Adjust the radius as needed
-      final roundedRect = RRect.fromRectAndCorners(labelRect,
-          topLeft: radius,
-          topRight: radius,
-          bottomLeft: radius,
-          bottomRight: radius);
-
-      final paint = Paint()
-        ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
-        ..style = PaintingStyle.fill;
+      // Rect labelRect = Rect.fromLTWH(
+      //   x - 2, // Align horizontally with the center of the text
+      //   size.height + 1, // Add some padding below the text
+      //   xLabelPainter.width + 6, // Add padding to both sides of the text
+      //   xLabelPainter.height + 6, // Add padding above and below the text
+      // );
+      // const radius = Radius.circular(8); // Adjust the radius as needed
+      // final roundedRect = RRect.fromRectAndCorners(labelRect,
+      //     topLeft: radius,
+      //     topRight: radius,
+      //     bottomLeft: radius,
+      //     bottomRight: radius);
+      //
+      // final paint = Paint()
+      //   ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
+      //   ..style = PaintingStyle.fill;
 
       // canvas.drawRRect(roundedRect, paint);
     }

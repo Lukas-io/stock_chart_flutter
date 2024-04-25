@@ -25,7 +25,6 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     loadJsonFromAssets();
   }
@@ -36,7 +35,6 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('updated');
     if (data != null) {
       stockData = PriceHistory.fromJson(data!).stockPriceHistory;
 
