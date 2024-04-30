@@ -173,6 +173,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
       if (beginDate.isAtSameMomentAs(dates[i]) ||
           beginDate.isBefore(dates[i])) {
         stockPriceHistory = stockData?.sublist(i);
+
         updated = true;
         break;
       }

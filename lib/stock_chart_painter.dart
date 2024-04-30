@@ -82,12 +82,10 @@ class StockPriceChartPainter extends CustomPainter {
       }
     }
 
-    double lastPrice = pricePoint != null
-        ? prices[chartIndex! == 0 ? 1 : chartIndex! - 1]
-        : prices.last;
+    bool changes =
+        (prices[chartIndex!] - prices.first) / prices.first * 100 < 0;
 
-    Color pressedPaintColor =
-        prices.first > lastPrice ? Colors.red : Colors.green;
+    Color pressedPaintColor = changes ? Colors.red : Colors.green;
     Color paintColor = prices.first > prices.last ? Colors.red : Colors.green;
 
     Paint chartPaint = Paint()
@@ -203,18 +201,18 @@ class StockPriceChartPainter extends CustomPainter {
     if (pricePoint != null) {
       double boundedLabelRectDx = 0;
       bool bounded = false;
-      if (chartAxis[chartIndex!].dx <= 60.0) {
+      if (chartAxis[chartIndex!].dx <= 70.0) {
         bounded = true;
         boundedLabelRectDx = 0;
-      } else if (chartAxis[chartIndex!].dx >= size.width - 60) {
+      } else if (chartAxis[chartIndex!].dx >= size.width - 70) {
         bounded = true;
-        boundedLabelRectDx = size.width - 120;
+        boundedLabelRectDx = size.width - 140;
       }
 
       Rect labelRect = Rect.fromLTWH(
-        bounded ? boundedLabelRectDx : chartAxis[chartIndex!].dx - 60,
+        bounded ? boundedLabelRectDx : chartAxis[chartIndex!].dx - 70,
         -40,
-        130,
+        140,
         50, // Add padding above and below the text
       );
       // Draw grey background behind the text labels
@@ -246,7 +244,7 @@ class StockPriceChartPainter extends CustomPainter {
           canvas,
           Offset(
               bounded
-                  ? boundedLabelRectDx + 30 - pricePainter.width / 2
+                  ? boundedLabelRectDx + 40 - pricePainter.width / 2
                   : chartAxis[chartIndex!].dx - pricePainter.width / 2 - 30,
               -35));
 
@@ -267,7 +265,7 @@ class StockPriceChartPainter extends CustomPainter {
           canvas,
           Offset(
               bounded
-                  ? boundedLabelRectDx + 45 + pricePainter.width / 2
+                  ? boundedLabelRectDx + 55 + pricePainter.width / 2
                   : chartAxis[chartIndex!].dx + pricePainter.width / 2 - 15,
               -35));
 
@@ -285,7 +283,7 @@ class StockPriceChartPainter extends CustomPainter {
           canvas,
           Offset(
               bounded
-                  ? boundedLabelRectDx + 65 - datePainter.width / 2
+                  ? boundedLabelRectDx + 70 - datePainter.width / 2
                   : chartAxis[chartIndex!].dx - datePainter.width / 2,
               -15));
     }
