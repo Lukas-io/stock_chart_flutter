@@ -33,7 +33,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
   List<StockData>? stockData;
   bool updated = false;
   String selectedRange = '1M';
-  Offset onPress = const Offset(100, 100);
+  Offset? onPress;
 //add ux
   @override
   Widget build(BuildContext context) {
@@ -57,14 +57,14 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
               padding:
                   const EdgeInsets.symmetric(horizontal: 0, vertical: 40.0),
               child: GestureDetector(
-                onHorizontalDragStart: (details) {
+                onHorizontalDragUpdate: (details) {
                   setState(() {
                     onPress = details.localPosition;
                   });
                 },
-                onHorizontalDragUpdate: (details) {
+                onHorizontalDragEnd: (details) {
                   setState(() {
-                    onPress = details.localPosition;
+                    onPress = null;
                   });
                 },
                 child: CustomPaint(

@@ -5,7 +5,7 @@ import 'package:stock_chart_flutter/price_history_model.dart';
 
 class StockPriceChartPainter extends CustomPainter {
   final List<StockData> stockPriceHistory;
-  final Offset pricePoint;
+  final Offset? pricePoint;
 
   final Paint gridPaint = Paint()
     ..color = Colors.grey
@@ -15,15 +15,11 @@ class StockPriceChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    Color paintColor =
-        stockPriceHistory.first.price > stockPriceHistory.last.price
-            ? Colors.red
-            : Colors.green;
-
-    // Draw chart axes
-
     List<DateTime> dates = [];
     List<double> prices = [];
+    List<Offset> chartAxis = [];
+    Offset? placedPoint;
+    int? chartIndex;
 
     for (var data in stockPriceHistory) {
       dates.add(data.dateTime);
@@ -35,15 +31,6 @@ class StockPriceChartPainter extends CustomPainter {
     DateTime maxDate = dates
         .reduce((value, element) => value.isAfter(element) ? value : element);
 
-    Paint chartPaint = Paint()
-      ..color = paintColor
-      ..strokeWidth = 2; // Adjust the thickness of the lines as needed
-
-    // Define colors for the gradient
-    Color startColor = paintColor.withOpacity(0.2); // Adjust opacity as needed
-    Color endColor =
-        paintColor.withOpacity(0.01); // Fully transparent color at the bottom
-
     // Calculate the minimum and maximum y-axis values
     double minValue = prices.reduce((a, b) => a < b ? a : b);
     double maxValue = prices.reduce((a, b) => a > b ? a : b);
@@ -53,15 +40,6 @@ class StockPriceChartPainter extends CustomPainter {
     }
 
     // Calculate the y-coordinate for the bottom of the gradient
-    double gradientBottomY =
-        size.height + (0.25 * size.height); // Adjust the percentage as needed
-
-    // Create a gradient shader
-    final Shader gradientShader = LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [startColor, endColor],
-    ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
 
     // Create a path for the line chart
     Path chartPath = Path();
@@ -75,8 +53,8 @@ class StockPriceChartPainter extends CustomPainter {
         ((prices.first - minValue) / (maxValue - minValue)) * size.height;
     chartPath.moveTo(x, y);
 
-    // Draw lines between each pair of consecutive data points
-    for (int i = 0; i < dates.length - 1; i++) {
+    // Store Chart Axis
+    for (int i = 0; i < dates.length; i++) {
       double x1 =
           ((dates[i].millisecondsSinceEpoch - minDate.millisecondsSinceEpoch) /
                   (maxDate.millisecondsSinceEpoch -
@@ -85,22 +63,83 @@ class StockPriceChartPainter extends CustomPainter {
       double y1 = size.height -
           ((prices[i] - minValue) / (maxValue - minValue)) * size.height;
 
-      double x2 = ((dates[i + 1].millisecondsSinceEpoch -
-                  minDate.millisecondsSinceEpoch) /
-              (maxDate.millisecondsSinceEpoch -
-                  minDate.millisecondsSinceEpoch)) *
-          size.width;
-      double y2 = size.height -
-          ((prices[i + 1] - minValue) / (maxValue - minValue)) * size.height;
+      chartAxis.add(Offset(x1, y1));
+    }
+    chartIndex = chartAxis.length - 1;
+    if (pricePoint != null) {
+      for (int i = 0; i < chartAxis.length - 1; i++) {
+        double horizontalAxis1 = chartAxis[i].dx;
+        double horizontalAxis2 = chartAxis[i + 1].dx;
+        if (pricePoint!.dx >= horizontalAxis1 &&
+            pricePoint!.dx <= horizontalAxis2) {
+          double difference1 = horizontalAxis1 - pricePoint!.dx;
+          double difference2 = horizontalAxis2 - pricePoint!.dx;
+
+          if (difference1 <= difference2) {
+            placedPoint = chartAxis[i];
+            chartIndex = i;
+          } else {
+            placedPoint = chartAxis[i + 1];
+            chartIndex = i + 1;
+          }
+        }
+      }
+    }
+
+    double lastPrice =
+        pricePoint != null ? prices[chartIndex! - 1] : prices.last;
+
+    Color pressedPaintColor =
+        prices.first >= lastPrice ? Colors.red : Colors.green;
+    Color paintColor = prices.first >= prices.last ? Colors.red : Colors.green;
+
+    Paint chartPaint = Paint()
+      ..color = paintColor.withOpacity(0.4)
+      ..strokeWidth = 2;
+    Paint pressedChartPaint = Paint()
+      ..color = pressedPaintColor
+      ..strokeWidth = 2; // Adjust the thickness of the lines as needed
+
+    // Define colors for the gradient
+    Color startColor = paintColor.withOpacity(0.2); // Adjust opacity as needed
+    Color endColor =
+        paintColor.withOpacity(0.01); // Fully transparent color at the bottom
+
+    double gradientBottomY =
+        size.height + (0.25 * size.height); // Adjust the percentage as needed
+
+    // Create a gradient shader
+    Shader gradientShader = LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: [startColor, endColor],
+    ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
+
+    // Draw lines between each pair of consecutive data points
+    for (int i = 0; i < chartAxis.length - 1; i++) {
+      double x1 = chartAxis[i].dx;
+      double y1 = chartAxis[i].dy;
+      double x2 = chartAxis[i + 1].dx;
+      double y2 = chartAxis[i + 1].dy;
 
       // Draw a line between each pair of consecutive data points
-      canvas.drawLine(Offset(x1, y1), Offset(x2, y2), chartPaint);
+      canvas.drawLine(Offset(x1, y1), Offset(x2, y2),
+          chartIndex! <= i ? chartPaint : pressedChartPaint);
 
       // Add points to the path for the gradient area
       chartPath.lineTo(x2, y2);
     }
 
-// Draw dashed line from end of last data point to beginning of scree
+    chartPath.lineTo(size.width, gradientBottomY);
+    chartPath.lineTo(0, gradientBottomY);
+    chartPath.close();
+    canvas.drawPath(
+        chartPath,
+        Paint()
+          ..shader = gradientShader
+          ..style = PaintingStyle.fill);
+
+// Draw dashed line from end of last data point to beginning of screen
     double lastX = ((dates.last.millisecondsSinceEpoch -
                 minDate.millisecondsSinceEpoch) /
             (maxDate.millisecondsSinceEpoch - minDate.millisecondsSinceEpoch)) *
@@ -120,37 +159,84 @@ class StockPriceChartPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
-    double dashPosition = lastX;
     int dashLength = 5;
-    double stopDashPosition = lastX - dashLength;
-    bool dash = true;
-    while (dashPosition > 0) {
-      if (dash) {
-        canvas.drawLine(Offset(dashPosition, lastY),
-            Offset(stopDashPosition, lastY), dashedLinePaint);
-      } else {
-        canvas.drawLine(Offset(dashPosition, lastY),
-            Offset(stopDashPosition, lastY), transparentDashedLinePaint);
+
+    if (pricePoint != null) {
+      double startPosition = -40;
+      double stopDashPosition = startPosition + dashLength.toDouble();
+      double pointDx = placedPoint!.dx;
+
+      bool dash = true;
+      while (startPosition < size.height + 50) {
+        if (dash) {
+          canvas.drawLine(Offset(pointDx, startPosition),
+              Offset(pointDx, stopDashPosition), dashedLinePaint);
+        } else {
+          canvas.drawLine(Offset(pointDx, startPosition),
+              Offset(pointDx, stopDashPosition), transparentDashedLinePaint);
+        }
+
+        startPosition += dashLength;
+        stopDashPosition += dashLength;
+
+        dash = !dash;
       }
+      canvas.drawCircle(placedPoint!, 5, Paint()..color = pressedPaintColor);
+    } else {
+      double dashPosition = lastX;
+      double stopDashPosition = lastX - dashLength;
+      bool dash = true;
+      while (dashPosition > 0) {
+        if (dash) {
+          canvas.drawLine(Offset(dashPosition, lastY),
+              Offset(stopDashPosition, lastY), dashedLinePaint);
+        } else {
+          canvas.drawLine(Offset(dashPosition, lastY),
+              Offset(stopDashPosition, lastY), transparentDashedLinePaint);
+        }
 
-      dashPosition -= dashLength;
-      stopDashPosition -= dashLength;
+        dashPosition -= dashLength;
+        stopDashPosition -= dashLength;
 
-      dash = !dash;
+        dash = !dash;
+      }
+      canvas.drawCircle(Offset(lastX, lastY), 5, Paint()..color = paintColor);
     }
-    print(pricePoint);
-    canvas.drawCircle(pricePoint, 5, Paint()..color = paintColor);
 
-    // Draw a filled area below the line chart using the gradient shader
-    chartPath.lineTo(size.width, gradientBottomY);
-    chartPath.lineTo(0, gradientBottomY);
-    chartPath.close();
-    canvas.drawPath(
-        chartPath,
-        Paint()
-          ..shader = gradientShader
-          ..style = PaintingStyle.fill);
+    if (pricePoint != null) {
+      TextPainter pricePainter = TextPainter(
+        textAlign: TextAlign.right,
+        textDirection: TextDirection.ltr,
+      );
+      pricePainter.text = TextSpan(
+        text: prices[chartIndex!].toString(),
+        style: const TextStyle(color: Colors.black, fontSize: 12),
+      );
+      print(prices[chartIndex!]);
+      pricePainter.layout();
+      pricePainter.paint(canvas,
+          Offset(chartAxis[chartIndex!].dx - pricePainter.width / 2, 0));
 
+      // Draw grey background behind the text labels
+      Rect labelRect = Rect.fromLTWH(
+        chartAxis[chartIndex!].dx - pricePainter.width / 2,
+        y - 2,
+        pricePainter.width + 6, // Add padding to both sides of the text
+        pricePainter.height + 4, // Add padding above and below the text
+      );
+      const radius = Radius.circular(8); // Adjust the radius as needed
+      final roundedRect = RRect.fromRectAndCorners(labelRect,
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius);
+
+      final paint = Paint()
+        ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
+        ..style = PaintingStyle.fill;
+
+      canvas.drawRRect(roundedRect, paint);
+    }
     // Draw y-axis labels with divisions
     TextPainter yLabelPainter = TextPainter(
       textAlign: TextAlign.right,
