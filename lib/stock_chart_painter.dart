@@ -100,7 +100,7 @@ class StockPriceChartPainter extends CustomPainter {
       chartPath.lineTo(x2, y2);
     }
 
-// Draw dashed line from end of last data point to beginning of screen
+// Draw dashed line from end of last data point to beginning of scree
     double lastX = ((dates.last.millisecondsSinceEpoch -
                 minDate.millisecondsSinceEpoch) /
             (maxDate.millisecondsSinceEpoch - minDate.millisecondsSinceEpoch)) *

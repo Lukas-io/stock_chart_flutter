@@ -34,7 +34,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
   bool updated = false;
   String selectedRange = '1M';
   Offset onPress = const Offset(100, 100);
-
+//add ux
   @override
   Widget build(BuildContext context) {
     if (data != null) {
