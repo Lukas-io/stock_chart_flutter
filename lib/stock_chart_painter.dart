@@ -5,12 +5,13 @@ import 'package:stock_chart_flutter/price_history_model.dart';
 
 class StockPriceChartPainter extends CustomPainter {
   final List<StockData> stockPriceHistory;
+  final Offset pricePoint;
 
   final Paint gridPaint = Paint()
     ..color = Colors.grey
     ..strokeWidth = 1;
 
-  StockPriceChartPainter(this.stockPriceHistory);
+  StockPriceChartPainter(this.stockPriceHistory, this.pricePoint);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -53,7 +54,7 @@ class StockPriceChartPainter extends CustomPainter {
 
     // Calculate the y-coordinate for the bottom of the gradient
     double gradientBottomY =
-        size.height + (0.1 * size.height); // Adjust the percentage as needed
+        size.height + (0.25 * size.height); // Adjust the percentage as needed
 
     // Create a gradient shader
     final Shader gradientShader = LinearGradient(
@@ -137,7 +138,8 @@ class StockPriceChartPainter extends CustomPainter {
 
       dash = !dash;
     }
-    canvas.drawCircle(Offset(lastX, lastY), 5, Paint()..color = paintColor);
+    print(pricePoint);
+    canvas.drawCircle(pricePoint, 5, Paint()..color = paintColor);
 
     // Draw a filled area below the line chart using the gradient shader
     chartPath.lineTo(size.width, gradientBottomY);
@@ -247,7 +249,7 @@ class StockPriceChartPainter extends CustomPainter {
       );
       xLabelPainter.layout();
       double x = (i * (size.width / xDivisions)) - (xLabelPainter.width / 2);
-      xLabelPainter.paint(canvas, Offset(x, size.height + 42));
+      xLabelPainter.paint(canvas, Offset(x, size.height * 1.25));
 
       // Draw grey background behind the text labels
       // Rect labelRect = Rect.fromLTWH(

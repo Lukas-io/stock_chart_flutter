@@ -32,11 +32,14 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
   List<StockData>? stockPriceHistory;
   List<StockData>? stockData;
   bool updated = false;
+  String selectedRange = '1M';
+  Offset onPress = const Offset(100, 100);
 
   @override
   Widget build(BuildContext context) {
     if (data != null) {
       stockData = PriceHistory.fromJson(data!).stockPriceHistory;
+      dateRange(selectedRange);
 
       if (!updated) {
         stockPriceHistory = stockData;
@@ -53,9 +56,21 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
             Padding(
               padding:
                   const EdgeInsets.symmetric(horizontal: 0, vertical: 40.0),
-              child: CustomPaint(
-                size: Size(MediaQuery.of(context).size.width - 10, 200.0),
-                painter: StockPriceChartPainter(stockPriceHistory!),
+              child: GestureDetector(
+                onHorizontalDragStart: (details) {
+                  setState(() {
+                    onPress = details.localPosition;
+                  });
+                },
+                onHorizontalDragUpdate: (details) {
+                  setState(() {
+                    onPress = details.localPosition;
+                  });
+                },
+                child: CustomPaint(
+                  size: Size(MediaQuery.of(context).size.width - 10, 200.0),
+                  painter: StockPriceChartPainter(stockPriceHistory!, onPress),
+                ),
               ),
             ),
             Padding(
@@ -87,11 +102,13 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
     }
   }
 
-  GestureDetector rangeButton(String range, {bool? add}) {
+  GestureDetector rangeButton(String range) {
+    bool selected = selectedRange == range;
+    // if (selected)
     return GestureDetector(
         onTap: () {
           setState(() {
-            dateRange(range);
+            selectedRange = range;
           });
         },
         child: Container(
@@ -99,7 +116,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
           padding: const EdgeInsets.all(8.0),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: Colors.grey.withOpacity(0.5)),
+              color: Colors.grey.withOpacity(selected ? 0.5 : 0)),
           child: Text(
             range,
             style: const TextStyle(color: Colors.black),
@@ -120,6 +137,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
     switch (range) {
       case '5D':
         beginDate = endDate.subtract(const Duration(days: 5));
+
         break;
       case '2W':
         beginDate = endDate.subtract(const Duration(days: 14));
@@ -137,6 +155,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         DateTime jan1 = DateTime(endDate.year, 1, 1);
         int daysFromJan1 = endDate.difference(jan1).inDays;
         beginDate = endDate.subtract(Duration(days: daysFromJan1));
+
         break;
       case '1Y':
         beginDate = endDate.subtract(const Duration(days: 365));
@@ -150,7 +169,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         break;
     }
 
-    for (int i = 0; i < dates.length; i++) {
+    for (int i = 0; i < dates.length - 1; i++) {
       if (beginDate.isAtSameMomentAs(dates[i]) ||
           beginDate.isBefore(dates[i])) {
         stockPriceHistory = stockData?.sublist(i);
