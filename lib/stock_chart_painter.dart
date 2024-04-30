@@ -7,10 +7,6 @@ class StockPriceChartPainter extends CustomPainter {
   final List<StockData> stockPriceHistory;
   final Offset? pricePoint;
 
-  final Paint gridPaint = Paint()
-    ..color = Colors.grey
-    ..strokeWidth = 1;
-
   StockPriceChartPainter(this.stockPriceHistory, this.pricePoint);
 
   @override
@@ -86,12 +82,13 @@ class StockPriceChartPainter extends CustomPainter {
       }
     }
 
-    double lastPrice =
-        pricePoint != null ? prices[chartIndex! - 1] : prices.last;
+    double lastPrice = pricePoint != null
+        ? prices[chartIndex! == 0 ? 1 : chartIndex! - 1]
+        : prices.last;
 
     Color pressedPaintColor =
-        prices.first >= lastPrice ? Colors.red : Colors.green;
-    Color paintColor = prices.first >= prices.last ? Colors.red : Colors.green;
+        prices.first > lastPrice ? Colors.red : Colors.green;
+    Color paintColor = prices.first > prices.last ? Colors.red : Colors.green;
 
     Paint chartPaint = Paint()
       ..color = paintColor.withOpacity(0.4)
@@ -106,7 +103,7 @@ class StockPriceChartPainter extends CustomPainter {
         paintColor.withOpacity(0.01); // Fully transparent color at the bottom
 
     double gradientBottomY =
-        size.height + (0.25 * size.height); // Adjust the percentage as needed
+        size.height + (0.3 * size.height); // Adjust the percentage as needed
 
     // Create a gradient shader
     Shader gradientShader = LinearGradient(
@@ -217,7 +214,7 @@ class StockPriceChartPainter extends CustomPainter {
       Rect labelRect = Rect.fromLTWH(
         bounded ? boundedLabelRectDx : chartAxis[chartIndex!].dx - 60,
         -40,
-        120,
+        130,
         50, // Add padding above and below the text
       );
       // Draw grey background behind the text labels
@@ -238,6 +235,7 @@ class StockPriceChartPainter extends CustomPainter {
         textAlign: TextAlign.right,
         textDirection: TextDirection.ltr,
       );
+
       pricePainter.text = TextSpan(
         text: prices[chartIndex!].toString(),
         style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -248,11 +246,30 @@ class StockPriceChartPainter extends CustomPainter {
           canvas,
           Offset(
               bounded
-                  ? boundedLabelRectDx + 60 - pricePainter.width / 2
-                  : chartAxis[chartIndex!].dx - pricePainter.width / 2,
+                  ? boundedLabelRectDx + 30 - pricePainter.width / 2
+                  : chartAxis[chartIndex!].dx - pricePainter.width / 2 - 30,
               -35));
 
-      // Draw grey background behind the text labels
+      TextPainter percentagePainter = TextPainter(
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
+      double percentage =
+          (prices[chartIndex] - prices.first) / prices.first * 100;
+      Color percentageColor = percentage >= 0 ? Colors.green : Colors.red;
+      percentagePainter.text = TextSpan(
+        text: '${percentage.toStringAsFixed(2)}%',
+        style: TextStyle(color: percentageColor, fontSize: 16),
+      );
+      percentagePainter.layout();
+
+      percentagePainter.paint(
+          canvas,
+          Offset(
+              bounded
+                  ? boundedLabelRectDx + 45 + pricePainter.width / 2
+                  : chartAxis[chartIndex!].dx + pricePainter.width / 2 - 15,
+              -35));
 
       TextPainter datePainter = TextPainter(
         textAlign: TextAlign.right,
@@ -268,7 +285,7 @@ class StockPriceChartPainter extends CustomPainter {
           canvas,
           Offset(
               bounded
-                  ? boundedLabelRectDx + 60 - datePainter.width / 2
+                  ? boundedLabelRectDx + 65 - datePainter.width / 2
                   : chartAxis[chartIndex!].dx - datePainter.width / 2,
               -15));
     }
@@ -371,7 +388,26 @@ class StockPriceChartPainter extends CustomPainter {
       );
       xLabelPainter.layout();
       double x = (i * (size.width / xDivisions)) - (xLabelPainter.width / 2);
-      xLabelPainter.paint(canvas, Offset(x, size.height * 1.25));
+      xLabelPainter.paint(canvas, Offset(x, size.height * 1.35));
+    }
+
+    if (pricePoint == null) {
+      TextPainter percentagePainter = TextPainter(
+        textAlign: TextAlign.center,
+        textDirection: TextDirection.ltr,
+      );
+      double percent = (prices.last - prices.first) / prices.first * 100;
+      Color percentColor = percent >= 0 ? Colors.green : Colors.red;
+      percentagePainter.text = TextSpan(
+        text: percent.toStringAsFixed(2) + '%',
+        style: TextStyle(color: percentColor, fontSize: 16),
+      );
+      percentagePainter.layout();
+
+      percentagePainter.paint(
+          canvas,
+          Offset(
+              size.width / 2 - percentagePainter.width / 2, size.height * 1.2));
     }
   }
 

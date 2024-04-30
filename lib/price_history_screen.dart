@@ -75,7 +75,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
             ),
             Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 30.0),
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 50.0),
               child: Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
