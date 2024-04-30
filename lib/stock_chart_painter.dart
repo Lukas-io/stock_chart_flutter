@@ -162,7 +162,7 @@ class StockPriceChartPainter extends CustomPainter {
     int dashLength = 5;
 
     if (pricePoint != null) {
-      double startPosition = -40;
+      double startPosition = 10;
       double stopDashPosition = startPosition + dashLength.toDouble();
       double pointDx = placedPoint!.dx;
 
@@ -204,27 +204,24 @@ class StockPriceChartPainter extends CustomPainter {
     }
 
     if (pricePoint != null) {
-      TextPainter pricePainter = TextPainter(
-        textAlign: TextAlign.right,
-        textDirection: TextDirection.ltr,
-      );
-      pricePainter.text = TextSpan(
-        text: prices[chartIndex!].toString(),
-        style: const TextStyle(color: Colors.black, fontSize: 12),
-      );
-      print(prices[chartIndex!]);
-      pricePainter.layout();
-      pricePainter.paint(canvas,
-          Offset(chartAxis[chartIndex!].dx - pricePainter.width / 2, 0));
+      double boundedLabelRectDx = 0;
+      bool bounded = false;
+      if (chartAxis[chartIndex!].dx <= 60.0) {
+        bounded = true;
+        boundedLabelRectDx = 0;
+      } else if (chartAxis[chartIndex!].dx >= size.width - 60) {
+        bounded = true;
+        boundedLabelRectDx = size.width - 120;
+      }
 
-      // Draw grey background behind the text labels
       Rect labelRect = Rect.fromLTWH(
-        chartAxis[chartIndex!].dx - pricePainter.width / 2,
-        y - 2,
-        pricePainter.width + 6, // Add padding to both sides of the text
-        pricePainter.height + 4, // Add padding above and below the text
+        bounded ? boundedLabelRectDx : chartAxis[chartIndex!].dx - 60,
+        -40,
+        120,
+        50, // Add padding above and below the text
       );
-      const radius = Radius.circular(8); // Adjust the radius as needed
+      // Draw grey background behind the text labels
+      const radius = Radius.circular(4); // Adjust the radius as needed
       final roundedRect = RRect.fromRectAndCorners(labelRect,
           topLeft: radius,
           topRight: radius,
@@ -236,7 +233,46 @@ class StockPriceChartPainter extends CustomPainter {
         ..style = PaintingStyle.fill;
 
       canvas.drawRRect(roundedRect, paint);
+
+      TextPainter pricePainter = TextPainter(
+        textAlign: TextAlign.right,
+        textDirection: TextDirection.ltr,
+      );
+      pricePainter.text = TextSpan(
+        text: prices[chartIndex!].toString(),
+        style: const TextStyle(color: Colors.black, fontSize: 16),
+      );
+
+      pricePainter.layout();
+      pricePainter.paint(
+          canvas,
+          Offset(
+              bounded
+                  ? boundedLabelRectDx + 60 - pricePainter.width / 2
+                  : chartAxis[chartIndex!].dx - pricePainter.width / 2,
+              -35));
+
+      // Draw grey background behind the text labels
+
+      TextPainter datePainter = TextPainter(
+        textAlign: TextAlign.right,
+        textDirection: TextDirection.ltr,
+      );
+      datePainter.text = TextSpan(
+        text: dates[chartIndex!].toString().split(' ')[0],
+        style: const TextStyle(color: Colors.black, fontSize: 14),
+      );
+
+      datePainter.layout();
+      datePainter.paint(
+          canvas,
+          Offset(
+              bounded
+                  ? boundedLabelRectDx + 60 - datePainter.width / 2
+                  : chartAxis[chartIndex!].dx - datePainter.width / 2,
+              -15));
     }
+
     // Draw y-axis labels with divisions
     TextPainter yLabelPainter = TextPainter(
       textAlign: TextAlign.right,
@@ -336,26 +372,6 @@ class StockPriceChartPainter extends CustomPainter {
       xLabelPainter.layout();
       double x = (i * (size.width / xDivisions)) - (xLabelPainter.width / 2);
       xLabelPainter.paint(canvas, Offset(x, size.height * 1.25));
-
-      // Draw grey background behind the text labels
-      // Rect labelRect = Rect.fromLTWH(
-      //   x - 2, // Align horizontally with the center of the text
-      //   size.height + 1, // Add some padding below the text
-      //   xLabelPainter.width + 6, // Add padding to both sides of the text
-      //   xLabelPainter.height + 6, // Add padding above and below the text
-      // );
-      // const radius = Radius.circular(8); // Adjust the radius as needed
-      // final roundedRect = RRect.fromRectAndCorners(labelRect,
-      //     topLeft: radius,
-      //     topRight: radius,
-      //     bottomLeft: radius,
-      //     bottomRight: radius);
-      //
-      // final paint = Paint()
-      //   ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
-      //   ..style = PaintingStyle.fill;
-
-      // canvas.drawRRect(roundedRect, paint);
     }
   }
 
