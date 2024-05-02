@@ -40,6 +40,10 @@ class StockPriceChartPainter extends CustomPainter {
     // Create a path for the line chart
     Path chartPath = Path();
 
+    //To create a more custom feel for the linear gradient under the chart
+    Path onChartPath1 = Path();
+    Path onChartPath2 = Path();
+
     // Move to the first data point
     double x = ((dates.first.millisecondsSinceEpoch -
                 minDate.millisecondsSinceEpoch) /
@@ -48,6 +52,7 @@ class StockPriceChartPainter extends CustomPainter {
     double y = size.height -
         ((prices.first - minValue) / (maxValue - minValue)) * size.height;
     chartPath.moveTo(x, y);
+    onChartPath1.moveTo(x, y);
 
     // Store Chart Axis
     for (int i = 0; i < dates.length; i++) {
@@ -62,6 +67,7 @@ class StockPriceChartPainter extends CustomPainter {
       chartAxis.add(Offset(x1, y1));
     }
     chartIndex = chartAxis.length - 1;
+
     if (pricePoint != null) {
       for (int i = 0; i < chartAxis.length - 1; i++) {
         double horizontalAxis1 = chartAxis[i].dx;
@@ -71,7 +77,7 @@ class StockPriceChartPainter extends CustomPainter {
           double difference1 = horizontalAxis1 - pricePoint!.dx;
           double difference2 = horizontalAxis2 - pricePoint!.dx;
 
-          if (difference1 <= difference2) {
+          if (difference1.abs() <= difference2.abs()) {
             placedPoint = chartAxis[i];
             chartIndex = i;
           } else {
@@ -90,25 +96,10 @@ class StockPriceChartPainter extends CustomPainter {
 
     Paint chartPaint = Paint()
       ..color = paintColor.withOpacity(0.4)
-      ..strokeWidth = 2;
+      ..strokeWidth = 1.5;
     Paint pressedChartPaint = Paint()
       ..color = pressedPaintColor
       ..strokeWidth = 2; // Adjust the thickness of the lines as needed
-
-    // Define colors for the gradient
-    Color startColor = paintColor.withOpacity(0.2); // Adjust opacity as needed
-    Color endColor =
-        paintColor.withOpacity(0.01); // Fully transparent color at the bottom
-
-    double gradientBottomY =
-        size.height + (0.3 * size.height); // Adjust the percentage as needed
-
-    // Create a gradient shader
-    Shader gradientShader = LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: [startColor, endColor],
-    ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
 
     // Draw lines between each pair of consecutive data points
     for (int i = 0; i < chartAxis.length - 1; i++) {
@@ -119,20 +110,84 @@ class StockPriceChartPainter extends CustomPainter {
 
       // Draw a line between each pair of consecutive data points
       canvas.drawLine(Offset(x1, y1), Offset(x2, y2),
-          chartIndex! <= i ? chartPaint : pressedChartPaint);
+          chartIndex <= i ? chartPaint : pressedChartPaint);
 
       // Add points to the path for the gradient area
       chartPath.lineTo(x2, y2);
+      if (i == chartIndex - 1) {
+        onChartPath2.moveTo(x2, y2);
+      }
+      if (i < chartIndex) {
+        onChartPath1.lineTo(x2, y2);
+      } else {
+        onChartPath2.lineTo(x2, y2);
+      }
     }
 
-    chartPath.lineTo(size.width, gradientBottomY);
-    chartPath.lineTo(0, gradientBottomY);
-    chartPath.close();
-    canvas.drawPath(
-        chartPath,
-        Paint()
-          ..shader = gradientShader
-          ..style = PaintingStyle.fill);
+    double gradientBottomY =
+        size.height + (0.3 * size.height); // Adjust the percentage as needed
+
+    if (pricePoint != null) {
+      // Define colors for the gradient
+      Color startColor1 =
+          pressedPaintColor.withOpacity(0.2); // Adjust opacity as needed
+      Color endColor1 = pressedPaintColor.withOpacity(0.01);
+      Color startColor2 =
+          paintColor.withOpacity(0.05); // Adjust opacity as needed
+      Color endColor2 =
+          paintColor.withOpacity(0.01); // Fully transparent color at the bottom
+
+      // Create a gradient shader
+      Shader gradientShader1 = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [startColor1, endColor1],
+      ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
+      Shader gradientShader2 = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [startColor2, endColor2],
+      ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
+
+      onChartPath1.lineTo(chartAxis[chartIndex].dx, gradientBottomY);
+      onChartPath1.lineTo(0, gradientBottomY);
+      onChartPath1.close();
+      canvas.drawPath(
+          onChartPath1,
+          Paint()
+            ..shader = gradientShader1
+            ..style = PaintingStyle.fill);
+      onChartPath2.lineTo(size.width, gradientBottomY);
+      onChartPath2.lineTo(chartAxis[chartIndex].dx, gradientBottomY);
+      onChartPath2.close();
+      canvas.drawPath(
+          onChartPath2,
+          Paint()
+            ..shader = gradientShader2
+            ..style = PaintingStyle.fill);
+    } else {
+      // Define colors for the gradient
+      Color startColor =
+          paintColor.withOpacity(0.2); // Adjust opacity as needed
+      Color endColor =
+          paintColor.withOpacity(0.01); // Fully transparent color at the bottom
+
+      // Create a gradient shader
+      Shader gradientShader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [startColor, endColor],
+      ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
+
+      chartPath.lineTo(size.width, gradientBottomY);
+      chartPath.lineTo(0, gradientBottomY);
+      chartPath.close();
+      canvas.drawPath(
+          chartPath,
+          Paint()
+            ..shader = gradientShader
+            ..style = PaintingStyle.fill);
+    }
 
 // Draw dashed line from end of last data point to beginning of screen
     double lastX = ((dates.last.millisecondsSinceEpoch -
@@ -159,7 +214,7 @@ class StockPriceChartPainter extends CustomPainter {
     if (pricePoint != null) {
       double startPosition = 10;
       double stopDashPosition = startPosition + dashLength.toDouble();
-      double pointDx = placedPoint!.dx;
+      double pointDx = placedPoint?.dx ?? size.width;
 
       bool dash = true;
       while (startPosition < size.height + 50) {
@@ -176,7 +231,8 @@ class StockPriceChartPainter extends CustomPainter {
 
         dash = !dash;
       }
-      canvas.drawCircle(placedPoint!, 5, Paint()..color = pressedPaintColor);
+      canvas.drawCircle(placedPoint ?? Offset(lastX, lastY), 5,
+          Paint()..color = pressedPaintColor);
     } else {
       double dashPosition = lastX;
       double stopDashPosition = lastX - dashLength;
@@ -197,24 +253,83 @@ class StockPriceChartPainter extends CustomPainter {
       }
       canvas.drawCircle(Offset(lastX, lastY), 5, Paint()..color = paintColor);
     }
+    List<String> monthNames = [
+      'Empty',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
 
+    TextPainter pricePainter = TextPainter(
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.ltr,
+    );
+
+    pricePainter.text = TextSpan(
+      text: prices[chartIndex].toString(),
+      style: const TextStyle(color: Colors.black, fontSize: 16),
+    );
+
+    pricePainter.layout();
+
+    TextPainter percentagePainter = TextPainter(
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+    double percentage =
+        (prices[chartIndex] - prices.first) / prices.first * 100;
+    Color percentageColor = percentage >= 0 ? Colors.green : Colors.red;
+    percentagePainter.text = TextSpan(
+      text: '${percentage.toStringAsFixed(2)}%',
+      style: TextStyle(color: percentageColor, fontSize: 16),
+    );
+    percentagePainter.layout();
+
+    TextPainter datePainter = TextPainter(
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.ltr,
+    );
+
+    String displayDate =
+        '${dates[chartIndex].day} ${monthNames[dates[chartIndex].month]} ${dates[chartIndex].year}';
+    datePainter.text = TextSpan(
+      text: displayDate,
+      style: const TextStyle(color: Colors.black, fontSize: 14),
+    );
+
+    datePainter.layout();
+
+    double labelRectWidth = pricePainter.width + percentagePainter.width + 36;
+    double labelRectHeight = pricePainter.height + datePainter.height + 12;
     if (pricePoint != null) {
       double boundedLabelRectDx = 0;
       bool bounded = false;
-      if (chartAxis[chartIndex!].dx <= 70.0) {
+      if (chartAxis[chartIndex].dx <= labelRectWidth / 2) {
         bounded = true;
         boundedLabelRectDx = 0;
-      } else if (chartAxis[chartIndex!].dx >= size.width - 70) {
+      } else if (chartAxis[chartIndex].dx >= size.width - labelRectWidth / 2) {
         bounded = true;
-        boundedLabelRectDx = size.width - 140;
+        boundedLabelRectDx = size.width - labelRectWidth;
       }
 
       Rect labelRect = Rect.fromLTWH(
-        bounded ? boundedLabelRectDx : chartAxis[chartIndex!].dx - 70,
-        -40,
-        140,
-        50, // Add padding above and below the text
-      );
+          bounded
+              ? boundedLabelRectDx
+              : chartAxis[chartIndex].dx - labelRectWidth / 2,
+          -40,
+          labelRectWidth,
+          labelRectHeight
+          // Add padding above and below the text
+          );
       // Draw grey background behind the text labels
       const radius = Radius.circular(4); // Adjust the radius as needed
       final roundedRect = RRect.fromRectAndCorners(labelRect,
@@ -223,150 +338,128 @@ class StockPriceChartPainter extends CustomPainter {
           bottomLeft: radius,
           bottomRight: radius);
 
-      final paint = Paint()
+      final backgroundPaint = Paint()
         ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
         ..style = PaintingStyle.fill;
 
-      canvas.drawRRect(roundedRect, paint);
-
-      TextPainter pricePainter = TextPainter(
-        textAlign: TextAlign.right,
-        textDirection: TextDirection.ltr,
-      );
-
-      pricePainter.text = TextSpan(
-        text: prices[chartIndex!].toString(),
-        style: const TextStyle(color: Colors.black, fontSize: 16),
-      );
-
-      pricePainter.layout();
+      canvas.drawRRect(roundedRect, backgroundPaint);
       pricePainter.paint(
           canvas,
           Offset(
               bounded
-                  ? boundedLabelRectDx + 40 - pricePainter.width / 2
-                  : chartAxis[chartIndex!].dx - pricePainter.width / 2 - 30,
-              -35));
-
-      TextPainter percentagePainter = TextPainter(
-        textAlign: TextAlign.center,
-        textDirection: TextDirection.ltr,
-      );
-      double percentage =
-          (prices[chartIndex] - prices.first) / prices.first * 100;
-      Color percentageColor = percentage >= 0 ? Colors.green : Colors.red;
-      percentagePainter.text = TextSpan(
-        text: '${percentage.toStringAsFixed(2)}%',
-        style: TextStyle(color: percentageColor, fontSize: 16),
-      );
-      percentagePainter.layout();
+                  ? boundedLabelRectDx +
+                      labelRectWidth / 4 -
+                      pricePainter.width / 2
+                  : chartAxis[chartIndex].dx -
+                      pricePainter.width / 2 -
+                      labelRectWidth / 4,
+              -36));
 
       percentagePainter.paint(
           canvas,
           Offset(
               bounded
-                  ? boundedLabelRectDx + 55 + pricePainter.width / 2
-                  : chartAxis[chartIndex!].dx + pricePainter.width / 2 - 15,
-              -35));
+                  ? boundedLabelRectDx +
+                      labelRectWidth / 4 +
+                      pricePainter.width / 2 +
+                      12
+                  : chartAxis[chartIndex].dx +
+                      pricePainter.width / 2 -
+                      labelRectWidth / 4 +
+                      12,
+              -36));
 
-      TextPainter datePainter = TextPainter(
-        textAlign: TextAlign.right,
-        textDirection: TextDirection.ltr,
-      );
-      datePainter.text = TextSpan(
-        text: dates[chartIndex!].toString().split(' ')[0],
-        style: const TextStyle(color: Colors.black, fontSize: 14),
-      );
-
-      datePainter.layout();
       datePainter.paint(
           canvas,
           Offset(
               bounded
-                  ? boundedLabelRectDx + 70 - datePainter.width / 2
-                  : chartAxis[chartIndex!].dx - datePainter.width / 2,
-              -15));
+                  ? boundedLabelRectDx +
+                      labelRectWidth / 2 -
+                      datePainter.width / 2
+                  : chartAxis[chartIndex].dx - datePainter.width / 2,
+              -36 + percentagePainter.height + 2));
     }
 
-    // Draw y-axis labels with divisions
-    TextPainter yLabelPainter = TextPainter(
-      textAlign: TextAlign.right,
-      textDirection: TextDirection.ltr,
-    );
-
-    double difference = maxValue - minValue;
-    String standardForm = difference.toStringAsExponential();
-
-    int? secondSignificantNumber = int.tryParse(standardForm[2]);
-    bool rounded = secondSignificantNumber != null
-        ? secondSignificantNumber >= 5
-            ? true
-            : false
-        : false;
-
-    // Rounding the number up (works with decimals also). To get the first significant value.
-    double significantValue = rounded
-        ? double.parse(standardForm[0]) + 1
-        : double.parse(standardForm[0]);
-    // print(rounded);
-    List<String> parts = standardForm.split('e');
-    int power = int.parse(parts[1]);
-    double differenceDivision = significantValue * pow(10, power);
-    int significantDifferenceNumber =
-        int.parse(differenceDivision.toStringAsExponential()[0]);
-    int yDivisions = significantDifferenceNumber % 3 == 0 ? 3 : 2;
-    double yDivisionInterval = differenceDivision / yDivisions;
-    bool muchDifference =
-        int.parse(differenceDivision.toStringAsExponential()[0]) > yDivisions
-            ? true
-            : false;
-
-    int differenceLength = findDifferenceLength(minValue, maxValue);
-
-    double roundedMinValue = muchDifference
-        ? double.parse(minValue.toStringAsPrecision(differenceLength + 1))
-        : double.parse(minValue.toStringAsPrecision(differenceLength + 2));
-
-    int fixedDecimalPoint =
-        getFixedDecimalPoints(yDivisions, differenceDivision, power);
-
-    for (int i = 0; i <= yDivisions; i++) {
-      double labelValue = roundedMinValue + (i * yDivisionInterval);
-      yLabelPainter.text = TextSpan(
-        text: !muchDifference && differenceDivision < 1
-            ? labelValue.toStringAsFixed(fixedDecimalPoint + 1)
-            : labelValue.toStringAsFixed(fixedDecimalPoint),
-        style: const TextStyle(color: Colors.black, fontSize: 12),
+    if (pricePoint == null) {
+      // Draw y-axis labels with divisions
+      TextPainter yLabelPainter = TextPainter(
+        textAlign: TextAlign.right,
+        textDirection: TextDirection.ltr,
       );
-      yLabelPainter.layout();
-      double y = size.height -
-          ((labelValue - minValue) / (maxValue - minValue)) * size.height -
-          (yLabelPainter.height / 2);
-      yLabelPainter.paint(canvas, Offset(10, y));
 
-      // Draw grey background behind the text labels
-      Rect labelRect = Rect.fromLTWH(
-        7, // Add some padding to the left side of the text
-        y - 2, // Align vertically with the center of the text
-        yLabelPainter.width + 6, // Add padding to both sides of the text
-        yLabelPainter.height + 4, // Add padding above and below the text
-      );
-      const radius = Radius.circular(8); // Adjust the radius as needed
-      final roundedRect = RRect.fromRectAndCorners(labelRect,
-          topLeft: radius,
-          topRight: radius,
-          bottomLeft: radius,
-          bottomRight: radius);
+      double difference = maxValue - minValue;
+      String standardForm = difference.toStringAsExponential();
 
-      final paint = Paint()
-        ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
-        ..style = PaintingStyle.fill;
+      int? secondSignificantNumber = int.tryParse(standardForm[2]);
+      bool rounded = secondSignificantNumber != null
+          ? secondSignificantNumber >= 5
+              ? true
+              : false
+          : false;
 
-      canvas.drawRRect(roundedRect, paint);
+      // Rounding the number up (works with decimals also). To get the first significant value.
+      double significantValue = rounded
+          ? double.parse(standardForm[0]) + 1
+          : double.parse(standardForm[0]);
+      // print(rounded);
+      List<String> parts = standardForm.split('e');
+      int power = int.parse(parts[1]);
+      double differenceDivision = significantValue * pow(10, power);
+      int significantDifferenceNumber =
+          int.parse(differenceDivision.toStringAsExponential()[0]);
+      int yDivisions = significantDifferenceNumber % 3 == 0 ? 3 : 2;
+      double yDivisionInterval = differenceDivision / yDivisions;
+      bool muchDifference =
+          int.parse(differenceDivision.toStringAsExponential()[0]) > yDivisions
+              ? true
+              : false;
+
+      int differenceLength = findDifferenceLength(minValue, maxValue);
+
+      double roundedMinValue = muchDifference
+          ? double.parse(minValue.toStringAsPrecision(differenceLength + 1))
+          : double.parse(minValue.toStringAsPrecision(differenceLength + 2));
+
+      int fixedDecimalPoint =
+          getFixedDecimalPoints(yDivisions, differenceDivision, power);
+
+      for (int i = 0; i <= yDivisions; i++) {
+        double labelValue = roundedMinValue + (i * yDivisionInterval);
+        yLabelPainter.text = TextSpan(
+          text: !muchDifference && differenceDivision < 1
+              ? labelValue.toStringAsFixed(fixedDecimalPoint + 1)
+              : labelValue.toStringAsFixed(fixedDecimalPoint),
+          style: const TextStyle(color: Colors.black, fontSize: 12),
+        );
+        yLabelPainter.layout();
+        double y = size.height -
+            ((labelValue - minValue) / (maxValue - minValue)) * size.height -
+            (yLabelPainter.height / 2);
+
+        // Draw grey background behind the text labels
+        Rect labelRect = Rect.fromLTWH(
+          7, // Add some padding to the left side of the text
+          y - 2, // Align vertically with the center of the text
+          yLabelPainter.width + 6, // Add padding to both sides of the text
+          yLabelPainter.height + 4, // Add padding above and below the text
+        );
+        const radius = Radius.circular(8); // Adjust the radius as needed
+        final roundedRect = RRect.fromRectAndCorners(labelRect,
+            topLeft: radius,
+            topRight: radius,
+            bottomLeft: radius,
+            bottomRight: radius);
+
+        final paint = Paint()
+          ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
+          ..style = PaintingStyle.fill;
+
+        canvas.drawRRect(roundedRect, paint);
+        yLabelPainter.paint(canvas, Offset(10, y));
+      }
     }
-
     // Define the number of divisions for the x-axis
-    int xDivisions = 5;
+    int xDivisions = 6;
     double xDivisionInterval =
         (maxDate.millisecondsSinceEpoch - minDate.millisecondsSinceEpoch) /
             xDivisions;
@@ -376,16 +469,43 @@ class StockPriceChartPainter extends CustomPainter {
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
     );
-    for (int i = 1; i < xDivisions; i++) {
+    List<DateTime> datesPlotted = [];
+    for (int i = 1; i <= xDivisions; i++) {
       DateTime divisionDate = DateTime.fromMillisecondsSinceEpoch(
           minDate.millisecondsSinceEpoch + (i * xDivisionInterval).toInt());
-      String date = divisionDate.toString().split(' ')[0];
+      String xDate;
+
+      if (datesPlotted.isNotEmpty) {
+        if (datesPlotted.last.year == divisionDate.year) {
+          if (datesPlotted.last.month == divisionDate.month) {
+            xDate = divisionDate.day.toString();
+          } else {
+            xDate = monthNames[divisionDate.month];
+          }
+        } else {
+          xDate = divisionDate.year.toString();
+        }
+      } else {
+        if (dates.last.year - dates.first.year <= 4) {
+          if (dates.last.month - dates.first.month < 3) {
+            xDate = divisionDate.day.toString();
+          } else {
+            xDate = monthNames[divisionDate.month];
+          }
+        } else {
+          xDate = divisionDate.year.toString();
+        }
+      }
+
+      datesPlotted.add(divisionDate);
+
       xLabelPainter.text = TextSpan(
-        text: date.toString(),
+        text: xDate,
         style: const TextStyle(color: Colors.black, fontSize: 12),
       );
       xLabelPainter.layout();
-      double x = (i * (size.width / xDivisions)) - (xLabelPainter.width / 2);
+      double x =
+          (i * (size.width * 0.9 / xDivisions)) - (xLabelPainter.width / 2);
       xLabelPainter.paint(canvas, Offset(x, size.height * 1.35));
     }
 
@@ -397,7 +517,7 @@ class StockPriceChartPainter extends CustomPainter {
       double percent = (prices.last - prices.first) / prices.first * 100;
       Color percentColor = percent >= 0 ? Colors.green : Colors.red;
       percentagePainter.text = TextSpan(
-        text: percent.toStringAsFixed(2) + '%',
+        text: '${percent.toStringAsFixed(2)}%',
         style: TextStyle(color: percentColor, fontSize: 16),
       );
       percentagePainter.layout();
