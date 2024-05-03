@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:stock_chart_flutter/price_history_model.dart';
 import 'package:stock_chart_flutter/stock_chart_painter.dart';
 
+import 'multi-touch-features/custom_gesture_detector.dart';
+
 class StockPriceHistoryScreen extends StatefulWidget {
   const StockPriceHistoryScreen({super.key});
 
@@ -53,20 +55,29 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 0, vertical: 40.0),
-              child: GestureDetector(
-                onHorizontalDragUpdate: (details) {
-                  setState(() {
-                    onPress = details.localPosition;
-                  });
-                },
-                onHorizontalDragEnd: (details) {
-                  setState(() {
-                    onPress = null;
-                  });
-                },
+            CustomGestureDetector(
+              supportedPointerCount: 1,
+              onMultiHorizontalDragStart: (details) {
+                print(details);
+              },
+              onMultiHorizontalDragUpdate: (details1, details2, number) {
+                print('hi');
+              },
+              /*gestures: {
+                HorizontalMultiDragGestureRecognizer:
+                    GestureRecognizerFactoryWithHandlers<
+                            HorizontalMultiDragGestureRecognizer>(
+                        () => HorizontalMultiDragGestureRecognizer(),
+                        (instance) {
+                  instance.onStart = (_) {
+                    print(_);
+                  };
+                }),
+              },*/
+
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 0, vertical: 40.0),
                 child: CustomPaint(
                   size: Size(MediaQuery.of(context).size.width - 10, 200.0),
                   painter: StockPriceChartPainter(stockPriceHistory!, onPress),

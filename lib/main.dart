@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.brown,
       ),
-      home: StockPriceHistoryScreen(),
+      home: const StockPriceHistoryScreen(),
     );
   }
 }

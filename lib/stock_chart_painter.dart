@@ -287,9 +287,12 @@ class StockPriceChartPainter extends CustomPainter {
     );
     double percentage =
         (prices[chartIndex] - prices.first) / prices.first * 100;
-    Color percentageColor = percentage >= 0 ? Colors.green : Colors.red;
+    Color percentageColor =
+        percentage >= 0 ? Colors.green.shade700 : Colors.red;
     percentagePainter.text = TextSpan(
-      text: '${percentage.toStringAsFixed(2)}%',
+      text: percentage > 0
+          ? '+${percentage.toStringAsFixed(2)}%'
+          : '${percentage.toStringAsFixed(2)}%',
       style: TextStyle(color: percentageColor, fontSize: 16),
     );
     percentagePainter.layout();
@@ -515,9 +518,11 @@ class StockPriceChartPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       );
       double percent = (prices.last - prices.first) / prices.first * 100;
-      Color percentColor = percent >= 0 ? Colors.green : Colors.red;
+      Color percentColor = percent >= 0 ? Colors.green.shade700 : Colors.red;
       percentagePainter.text = TextSpan(
-        text: '${percent.toStringAsFixed(2)}%',
+        text: percent > 0
+            ? '+${percent.toStringAsFixed(2)}%'
+            : '${percent.toStringAsFixed(2)}%',
         style: TextStyle(color: percentColor, fontSize: 16),
       );
       percentagePainter.layout();
