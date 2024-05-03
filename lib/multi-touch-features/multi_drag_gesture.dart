@@ -19,28 +19,28 @@ class CustomVerticalMultiDragRecognizer
   DelayedProcessHandler? _delayedProcessHandler;
 
   /// Multi touch vertical drag start
-  final GestureMultiDragStartCallback onMultiVerticalDragStart;
+  final GestureMultiDragStartCallback? onMultiVerticalDragStart;
 
   /// Multi touch vertical drag update
-  final GestureMultiDragUpdateCallback onMultiVerticalDragUpdate;
+  final GestureMultiDragUpdateCallback? onMultiVerticalDragUpdate;
 
   /// Multi touch vertical drag end
-  final GestureMultiDragEndCallback onMultiVerticalDragEnd;
+  final GestureMultiDragEndCallback? onMultiVerticalDragEnd;
 
   /// Multi touch vertical drag cancel
-  final GestureMultiDragCancelCallback onMultiVerticalDragCancel;
+  final GestureMultiDragCancelCallback? onMultiVerticalDragCancel;
 
   /// Single touch vertical drag start
-  final GestureDragStartCallback onVerticalDragStart;
+  final GestureDragStartCallback? onVerticalDragStart;
 
   /// Single touch vertical drag update
-  final GestureDragUpdateCallback onVerticalDragUpdate;
+  final GestureDragUpdateCallback? onVerticalDragUpdate;
 
   /// Single touch vertical drag end
-  final GestureDragEndCallback onVerticalDragEnd;
+  final GestureDragEndCallback? onVerticalDragEnd;
 
   /// Single touch vertical drag cancel
-  final GestureDragCancelCallback onVerticalDragCancel;
+  final GestureDragCancelCallback? onVerticalDragCancel;
 
   /// Public constructor
   CustomVerticalMultiDragRecognizer(
@@ -75,12 +75,12 @@ class CustomVerticalMultiDragRecognizer
       if (onVerticalDragUpdate == null) {
         return;
       }
-      onVerticalDragUpdate(DragUpdateDetails(
+      onVerticalDragUpdate!(DragUpdateDetails(
           globalPosition: latestPosition,
           delta: Offset(0.0, delta),
           primaryDelta: delta));
     } else {
-      onMultiVerticalDragUpdate(initialPosition, latestPosition, delta);
+      onMultiVerticalDragUpdate!(initialPosition, latestPosition, delta);
     }
   }
 
@@ -93,7 +93,7 @@ class CustomVerticalMultiDragRecognizer
       if (onVerticalDragEnd == null) {
         return;
       }
-      onVerticalDragEnd(DragEndDetails(
+      onVerticalDragEnd!(DragEndDetails(
           velocity: Velocity(
               pixelsPerSecond:
                   fromDifference(initialPosition, latestPosition))));
@@ -101,7 +101,7 @@ class CustomVerticalMultiDragRecognizer
       if (onMultiVerticalDragEnd == null) {
         return;
       }
-      onMultiVerticalDragEnd(initialPosition, latestPosition, delta);
+      onMultiVerticalDragEnd!(initialPosition, latestPosition, delta);
     }
     _pointerCount = 0;
   }
@@ -111,12 +111,12 @@ class CustomVerticalMultiDragRecognizer
       if (onVerticalDragCancel == null) {
         return;
       }
-      onVerticalDragCancel();
+      onVerticalDragCancel!();
     } else {
       if (onMultiVerticalDragCancel == null) {
         return;
       }
-      onMultiVerticalDragCancel();
+      onMultiVerticalDragCancel!();
     }
     _pointerCount = 0;
   }
@@ -144,28 +144,28 @@ class CustomHorizontalMultiDragRecognizer
   DelayedProcessHandler? _delayedProcessHandler;
 
   /// Multi touch horizontal drag start
-  final GestureMultiDragStartCallback onMultiHorizontalDragStart;
+  final GestureMultiDragStartCallback? onMultiHorizontalDragStart;
 
   /// Multi touch horizontal drag update
-  final GestureMultiDragUpdateCallback onMultiHorizontalDragUpdate;
+  final GestureMultiDragUpdateCallback? onMultiHorizontalDragUpdate;
 
   /// Multi touch horizontal drag end
-  final GestureMultiDragEndCallback onMultiHorizontalDragEnd;
+  final GestureMultiDragEndCallback? onMultiHorizontalDragEnd;
 
   /// Multi touch horizontal drag cancel
-  final GestureMultiDragCancelCallback onMultiHorizontalDragCancel;
+  final GestureMultiDragCancelCallback? onMultiHorizontalDragCancel;
 
   /// Single touch horizontal drag start
-  final GestureDragStartCallback onHorizontalDragStart;
+  final GestureDragStartCallback? onHorizontalDragStart;
 
   /// Single touch horizontal drag update
-  final GestureDragUpdateCallback onHorizontalDragUpdate;
+  final GestureDragUpdateCallback? onHorizontalDragUpdate;
 
   /// Single touch horizontal drag end
-  final GestureDragEndCallback onHorizontalDragEnd;
+  final GestureDragEndCallback? onHorizontalDragEnd;
 
   /// Single touch horizontal drag cancel
-  final GestureDragCancelCallback onHorizontalDragCancel;
+  final GestureDragCancelCallback? onHorizontalDragCancel;
 
   /// Public constructor
   CustomHorizontalMultiDragRecognizer(
@@ -179,9 +179,7 @@ class CustomHorizontalMultiDragRecognizer
     this.onHorizontalDragEnd,
     this.onHorizontalDragCancel,
     this.supportedPointerCount,
-  )   : assert(onMultiHorizontalDragStart != null ||
-            onMultiHorizontalDragUpdate != null),
-        super(debugOwner: debugOwner) {
+  ) : super(debugOwner: debugOwner) {
     onStart = _handleMultiDragOnStart;
   }
 
@@ -203,12 +201,12 @@ class CustomHorizontalMultiDragRecognizer
       if (onHorizontalDragUpdate == null) {
         return;
       }
-      onHorizontalDragUpdate(DragUpdateDetails(
+      onHorizontalDragUpdate!(DragUpdateDetails(
           globalPosition: latestPosition,
           delta: Offset(delta, 0.0),
           primaryDelta: delta));
     } else {
-      onMultiHorizontalDragUpdate(initialPosition, latestPosition, delta);
+      onMultiHorizontalDragUpdate!(initialPosition, latestPosition, delta);
     }
   }
 
@@ -221,7 +219,7 @@ class CustomHorizontalMultiDragRecognizer
       if (onHorizontalDragEnd == null) {
         return;
       }
-      onHorizontalDragEnd(DragEndDetails(
+      onHorizontalDragEnd!(DragEndDetails(
           velocity: Velocity(
               pixelsPerSecond:
                   fromDifference(initialPosition, latestPosition))));
@@ -229,7 +227,7 @@ class CustomHorizontalMultiDragRecognizer
       if (onMultiHorizontalDragEnd == null) {
         return;
       }
-      onMultiHorizontalDragEnd(initialPosition, latestPosition, delta);
+      onMultiHorizontalDragEnd!(initialPosition, latestPosition, delta);
     }
     pointerCount = 0;
   }
@@ -239,12 +237,12 @@ class CustomHorizontalMultiDragRecognizer
       if (onHorizontalDragCancel == null) {
         return;
       }
-      onHorizontalDragCancel();
+      onHorizontalDragCancel!();
     } else {
       if (onMultiHorizontalDragCancel == null) {
         return;
       }
-      onMultiHorizontalDragCancel();
+      onMultiHorizontalDragCancel!();
     }
     pointerCount = 0;
   }
@@ -269,21 +267,21 @@ class ItemDrag extends Drag {
   ///  - vertical single drag update
   ///  - horizontal multi drag update
   ///  - horizontal single drag update
-  final GestureMultiDragUpdateCallback onDragUpdate;
+  final GestureMultiDragUpdateCallback? onDragUpdate;
 
   /// A drag update gesture, it can be any of following:
   ///  - vertical multi drag end
   ///  - vertical single drag end
   ///  - horizontal multi drag end
   ///  - horizontal single drag end
-  final GestureMultiDragEndCallback onDragEnd;
+  final GestureMultiDragEndCallback? onDragEnd;
 
   /// A drag update gesture, it can be any of following:
   ///  - vertical multi drag cancel
   ///  - vertical single drag cancel
   ///  - horizontal multi drag cancel
   ///  - horizontal single drag cancel
-  final GestureMultiDragCancelCallback onCancel;
+  final GestureMultiDragCancelCallback? onCancel;
 
   /// public constructor
   ItemDrag(this.onDragUpdate, this.onDragEnd, this.onCancel);
@@ -293,20 +291,20 @@ class ItemDrag extends Drag {
     _latestPosition = details.globalPosition;
     // delta = details.delta.dx;
     _delta = _latestPosition!.dx - _initialPosition!.dx;
-    onDragUpdate(_initialPosition!, _latestPosition!, _delta);
+    onDragUpdate!(_initialPosition!, _latestPosition!, _delta);
     super.update(details);
   }
 
   @override
   void cancel() {
-    onCancel();
+    onCancel!();
     reset();
     super.cancel();
   }
 
   @override
   void end(DragEndDetails details) {
-    onDragEnd(_initialPosition!, _latestPosition!, _delta);
+    onDragEnd!(_initialPosition!, _latestPosition!, _delta);
     reset();
     super.end(details);
   }

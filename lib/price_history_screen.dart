@@ -56,7 +56,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomGestureDetector(
-              supportedPointerCount: 1,
+              supportedPointerCount: 2,
               onMultiHorizontalDragStart: (details) {
                 print(details);
               },

@@ -386,7 +386,6 @@ class _CustomGestureDetectorState extends State<CustomGestureDetector> {
     GestureDragEndCallback? onHorizontalDragEnd,
     GestureDragCancelCallback? onHorizontalDragCancel,
   ) {
-    print('reached');
     gestures[CustomHorizontalMultiDragRecognizer] =
         getMultiHorizontalDragGestureRecognizer(
       this,
@@ -413,6 +412,7 @@ class _CustomGestureDetectorState extends State<CustomGestureDetector> {
     GestureDragEndCallback? onVerticalDragEnd,
     GestureDragCancelCallback? onVerticalDragCancel,
   ) {
+    print('reached');
     gestures[CustomVerticalMultiDragRecognizer] =
         getMultiVerticalDragGestureRecognizer(
       this,
