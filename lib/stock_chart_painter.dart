@@ -5,17 +5,21 @@ import 'package:stock_chart_flutter/price_history_model.dart';
 
 class StockPriceChartPainter extends CustomPainter {
   final List<StockData> stockPriceHistory;
-  final Offset? pricePoint;
+  final Offset? pricePoint1;
+  final Offset? pricePoint2;
 
-  StockPriceChartPainter(this.stockPriceHistory, this.pricePoint);
+  StockPriceChartPainter(
+      this.stockPriceHistory, this.pricePoint1, this.pricePoint2);
 
   @override
   void paint(Canvas canvas, Size size) {
     List<DateTime> dates = [];
     List<double> prices = [];
     List<Offset> chartAxis = [];
-    Offset? placedPoint;
-    int? chartIndex;
+    Offset? placedPoint1;
+    int? chartIndex1;
+    Offset? placedPoint2;
+    int? chartIndex2;
 
     for (var data in stockPriceHistory) {
       dates.add(data.dateTime);
@@ -66,30 +70,49 @@ class StockPriceChartPainter extends CustomPainter {
 
       chartAxis.add(Offset(x1, y1));
     }
-    chartIndex = chartAxis.length - 1;
+    chartIndex1 = chartAxis.length - 1;
 
-    if (pricePoint != null) {
+    if (pricePoint1 != null) {
       for (int i = 0; i < chartAxis.length - 1; i++) {
         double horizontalAxis1 = chartAxis[i].dx;
         double horizontalAxis2 = chartAxis[i + 1].dx;
-        if (pricePoint!.dx >= horizontalAxis1 &&
-            pricePoint!.dx <= horizontalAxis2) {
-          double difference1 = horizontalAxis1 - pricePoint!.dx;
-          double difference2 = horizontalAxis2 - pricePoint!.dx;
+        if (pricePoint1!.dx >= horizontalAxis1 &&
+            pricePoint1!.dx <= horizontalAxis2) {
+          double difference1 = horizontalAxis1 - pricePoint1!.dx;
+          double difference2 = horizontalAxis2 - pricePoint1!.dx;
 
           if (difference1.abs() <= difference2.abs()) {
-            placedPoint = chartAxis[i];
-            chartIndex = i;
+            placedPoint1 = chartAxis[i];
+            chartIndex1 = i;
           } else {
-            placedPoint = chartAxis[i + 1];
-            chartIndex = i + 1;
+            placedPoint1 = chartAxis[i + 1];
+            chartIndex1 = i + 1;
+          }
+        }
+      }
+    }
+    if (pricePoint2 != null) {
+      for (int i = 0; i < chartAxis.length - 1; i++) {
+        double horizontalAxis1 = chartAxis[i].dx;
+        double horizontalAxis2 = chartAxis[i + 1].dx;
+        if (pricePoint2!.dx >= horizontalAxis1 &&
+            pricePoint2!.dx <= horizontalAxis2) {
+          double difference1 = horizontalAxis1 - pricePoint2!.dx;
+          double difference2 = horizontalAxis2 - pricePoint2!.dx;
+
+          if (difference1.abs() <= difference2.abs()) {
+            placedPoint2 = chartAxis[i];
+            chartIndex2 = i;
+          } else {
+            placedPoint2 = chartAxis[i + 1];
+            chartIndex2 = i + 1;
           }
         }
       }
     }
 
     bool changes =
-        (prices[chartIndex!] - prices.first) / prices.first * 100 < 0;
+        (prices[chartIndex1!] - prices.first) / prices.first * 100 < 0;
 
     Color pressedPaintColor = changes ? Colors.red : Colors.green;
     Color paintColor = prices.first > prices.last ? Colors.red : Colors.green;
@@ -110,14 +133,14 @@ class StockPriceChartPainter extends CustomPainter {
 
       // Draw a line between each pair of consecutive data points
       canvas.drawLine(Offset(x1, y1), Offset(x2, y2),
-          chartIndex <= i ? chartPaint : pressedChartPaint);
+          chartIndex1 <= i ? chartPaint : pressedChartPaint);
 
       // Add points to the path for the gradient area
       chartPath.lineTo(x2, y2);
-      if (i == chartIndex - 1) {
+      if (i == chartIndex1 - 1) {
         onChartPath2.moveTo(x2, y2);
       }
-      if (i < chartIndex) {
+      if (i < chartIndex1) {
         onChartPath1.lineTo(x2, y2);
       } else {
         onChartPath2.lineTo(x2, y2);
@@ -127,7 +150,7 @@ class StockPriceChartPainter extends CustomPainter {
     double gradientBottomY =
         size.height + (0.3 * size.height); // Adjust the percentage as needed
 
-    if (pricePoint != null) {
+    if (pricePoint1 != null) {
       // Define colors for the gradient
       Color startColor1 =
           pressedPaintColor.withOpacity(0.2); // Adjust opacity as needed
@@ -149,7 +172,7 @@ class StockPriceChartPainter extends CustomPainter {
         colors: [startColor2, endColor2],
       ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
 
-      onChartPath1.lineTo(chartAxis[chartIndex].dx, gradientBottomY);
+      onChartPath1.lineTo(chartAxis[chartIndex1].dx, gradientBottomY);
       onChartPath1.lineTo(0, gradientBottomY);
       onChartPath1.close();
       canvas.drawPath(
@@ -158,7 +181,7 @@ class StockPriceChartPainter extends CustomPainter {
             ..shader = gradientShader1
             ..style = PaintingStyle.fill);
       onChartPath2.lineTo(size.width, gradientBottomY);
-      onChartPath2.lineTo(chartAxis[chartIndex].dx, gradientBottomY);
+      onChartPath2.lineTo(chartAxis[chartIndex1].dx, gradientBottomY);
       onChartPath2.close();
       canvas.drawPath(
           onChartPath2,
@@ -210,11 +233,10 @@ class StockPriceChartPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     int dashLength = 5;
-
-    if (pricePoint != null) {
+    if (pricePoint2 != null) {
       double startPosition = 10;
       double stopDashPosition = startPosition + dashLength.toDouble();
-      double pointDx = placedPoint?.dx ?? size.width;
+      double pointDx = placedPoint2?.dx ?? size.width;
 
       bool dash = true;
       while (startPosition < size.height + 50) {
@@ -231,7 +253,29 @@ class StockPriceChartPainter extends CustomPainter {
 
         dash = !dash;
       }
-      canvas.drawCircle(placedPoint ?? Offset(lastX, lastY), 5,
+    }
+
+    if (pricePoint1 != null) {
+      double startPosition = 10;
+      double stopDashPosition = startPosition + dashLength.toDouble();
+      double pointDx = placedPoint1?.dx ?? size.width;
+
+      bool dash = true;
+      while (startPosition < size.height + 50) {
+        if (dash) {
+          canvas.drawLine(Offset(pointDx, startPosition),
+              Offset(pointDx, stopDashPosition), dashedLinePaint);
+        } else {
+          canvas.drawLine(Offset(pointDx, startPosition),
+              Offset(pointDx, stopDashPosition), transparentDashedLinePaint);
+        }
+
+        startPosition += dashLength;
+        stopDashPosition += dashLength;
+
+        dash = !dash;
+      }
+      canvas.drawCircle(placedPoint1 ?? Offset(lastX, lastY), 5,
           Paint()..color = pressedPaintColor);
     } else {
       double dashPosition = lastX;
@@ -275,7 +319,7 @@ class StockPriceChartPainter extends CustomPainter {
     );
 
     pricePainter.text = TextSpan(
-      text: prices[chartIndex].toString(),
+      text: prices[chartIndex1].toString(),
       style: const TextStyle(color: Colors.black, fontSize: 16),
     );
 
@@ -286,7 +330,7 @@ class StockPriceChartPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     );
     double percentage =
-        (prices[chartIndex] - prices.first) / prices.first * 100;
+        (prices[chartIndex1] - prices.first) / prices.first * 100;
     Color percentageColor =
         percentage >= 0 ? Colors.green.shade700 : Colors.red;
     percentagePainter.text = TextSpan(
@@ -303,7 +347,7 @@ class StockPriceChartPainter extends CustomPainter {
     );
 
     String displayDate =
-        '${dates[chartIndex].day} ${monthNames[dates[chartIndex].month]} ${dates[chartIndex].year}';
+        '${dates[chartIndex1].day} ${monthNames[dates[chartIndex1].month]} ${dates[chartIndex1].year}';
     datePainter.text = TextSpan(
       text: displayDate,
       style: const TextStyle(color: Colors.black, fontSize: 14),
@@ -313,13 +357,13 @@ class StockPriceChartPainter extends CustomPainter {
 
     double labelRectWidth = pricePainter.width + percentagePainter.width + 36;
     double labelRectHeight = pricePainter.height + datePainter.height + 12;
-    if (pricePoint != null) {
+    if (pricePoint1 != null) {
       double boundedLabelRectDx = 0;
       bool bounded = false;
-      if (chartAxis[chartIndex].dx <= labelRectWidth / 2) {
+      if (chartAxis[chartIndex1].dx <= labelRectWidth / 2) {
         bounded = true;
         boundedLabelRectDx = 0;
-      } else if (chartAxis[chartIndex].dx >= size.width - labelRectWidth / 2) {
+      } else if (chartAxis[chartIndex1].dx >= size.width - labelRectWidth / 2) {
         bounded = true;
         boundedLabelRectDx = size.width - labelRectWidth;
       }
@@ -327,7 +371,7 @@ class StockPriceChartPainter extends CustomPainter {
       Rect labelRect = Rect.fromLTWH(
           bounded
               ? boundedLabelRectDx
-              : chartAxis[chartIndex].dx - labelRectWidth / 2,
+              : chartAxis[chartIndex1].dx - labelRectWidth / 2,
           -40,
           labelRectWidth,
           labelRectHeight
@@ -353,7 +397,7 @@ class StockPriceChartPainter extends CustomPainter {
                   ? boundedLabelRectDx +
                       labelRectWidth / 4 -
                       pricePainter.width / 2
-                  : chartAxis[chartIndex].dx -
+                  : chartAxis[chartIndex1].dx -
                       pricePainter.width / 2 -
                       labelRectWidth / 4,
               -36));
@@ -366,7 +410,7 @@ class StockPriceChartPainter extends CustomPainter {
                       labelRectWidth / 4 +
                       pricePainter.width / 2 +
                       12
-                  : chartAxis[chartIndex].dx +
+                  : chartAxis[chartIndex1].dx +
                       pricePainter.width / 2 -
                       labelRectWidth / 4 +
                       12,
@@ -379,11 +423,11 @@ class StockPriceChartPainter extends CustomPainter {
                   ? boundedLabelRectDx +
                       labelRectWidth / 2 -
                       datePainter.width / 2
-                  : chartAxis[chartIndex].dx - datePainter.width / 2,
+                  : chartAxis[chartIndex1].dx - datePainter.width / 2,
               -36 + percentagePainter.height + 2));
     }
 
-    if (pricePoint == null) {
+    if (pricePoint1 == null) {
       // Draw y-axis labels with divisions
       TextPainter yLabelPainter = TextPainter(
         textAlign: TextAlign.right,
@@ -512,7 +556,7 @@ class StockPriceChartPainter extends CustomPainter {
       xLabelPainter.paint(canvas, Offset(x, size.height * 1.35));
     }
 
-    if (pricePoint == null) {
+    if (pricePoint1 == null) {
       TextPainter percentagePainter = TextPainter(
         textAlign: TextAlign.center,
         textDirection: TextDirection.ltr,

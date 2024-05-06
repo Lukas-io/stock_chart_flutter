@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:stock_chart_flutter/price_history_model.dart';
 import 'package:stock_chart_flutter/stock_chart_painter.dart';
 
-import 'multi-touch-features/custom_gesture_detector.dart';
-
 class StockPriceHistoryScreen extends StatefulWidget {
   const StockPriceHistoryScreen({super.key});
 
@@ -35,7 +33,10 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
   List<StockData>? stockData;
   bool updated = false;
   String selectedRange = '1M';
-  Offset? onPress;
+  int supported = 1;
+  Offset? onPress1;
+  Offset? onPress2;
+  List<Offset?> pointersLocation = [null, null];
 //add ux
   @override
   Widget build(BuildContext context) {
@@ -55,14 +56,40 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomGestureDetector(
-              supportedPointerCount: 2,
-              onMultiHorizontalDragStart: (details) {
-                print(details);
+            Listener(
+              onPointerDown: (details) {
+                if (details.device == 0) {
+                  pointersLocation[0] = details.localPosition;
+                }
+                if (details.device == 1) {
+                  pointersLocation[1] = details.localPosition;
+                }
+                setState(() {});
               },
-              onMultiHorizontalDragUpdate: (details1, details2, number) {
-                print('hi');
+              onPointerMove: (details) {
+                if (details.device == 0) {
+                  pointersLocation[0] = details.localPosition;
+                }
+                if (details.device == 1) {
+                  pointersLocation[1] = details.localPosition;
+                }
+
+                onPress1 = pointersLocation[0];
+                onPress2 = pointersLocation[1];
+                setState(() {});
               },
+              onPointerUp: (details) {
+                if (details.device == 0) {
+                  pointersLocation[0] = null;
+                  onPress1 = null;
+                }
+                if (details.device == 1) {
+                  pointersLocation[1] = null;
+                  onPress2 = null;
+                }
+                setState(() {});
+              },
+
               /*gestures: {
                 HorizontalMultiDragGestureRecognizer:
                     GestureRecognizerFactoryWithHandlers<
@@ -80,7 +107,8 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
                     const EdgeInsets.symmetric(horizontal: 0, vertical: 40.0),
                 child: CustomPaint(
                   size: Size(MediaQuery.of(context).size.width - 10, 200.0),
-                  painter: StockPriceChartPainter(stockPriceHistory!, onPress),
+                  painter: StockPriceChartPainter(
+                      stockPriceHistory!, onPress1, onPress2),
                 ),
               ),
             ),
@@ -175,7 +203,6 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         beginDate = endDate.subtract(const Duration(days: 1825));
         break;
       case 'All':
-
       default:
         break;
     }
