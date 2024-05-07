@@ -13,6 +13,9 @@ class StockPriceChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    Offset? pricePoint1 = this.pricePoint1;
+    Offset? pricePoint2 = this.pricePoint2;
+
     List<DateTime> dates = [];
     List<double> prices = [];
     List<Offset> chartAxis = [];
@@ -71,6 +74,7 @@ class StockPriceChartPainter extends CustomPainter {
       chartAxis.add(Offset(x1, y1));
     }
     chartIndex1 = chartAxis.length - 1;
+    chartIndex2 = chartAxis.length - 1;
 
     if (pricePoint1 != null) {
       for (int i = 0; i < chartAxis.length - 1; i++) {
@@ -131,19 +135,50 @@ class StockPriceChartPainter extends CustomPainter {
       double x2 = chartAxis[i + 1].dx;
       double y2 = chartAxis[i + 1].dy;
 
-      // Draw a line between each pair of consecutive data points
-      canvas.drawLine(Offset(x1, y1), Offset(x2, y2),
-          chartIndex1 <= i ? chartPaint : pressedChartPaint);
-
       // Add points to the path for the gradient area
       chartPath.lineTo(x2, y2);
-      if (i == chartIndex1 - 1) {
-        onChartPath2.moveTo(x2, y2);
-      }
-      if (i < chartIndex1) {
-        onChartPath1.lineTo(x2, y2);
+      if (pricePoint1 != null && pricePoint2 != null) {
+        int firstPoint =
+            chartIndex1 <= chartIndex2! ? chartIndex1 : chartIndex2;
+        int secondPoint =
+            chartIndex1 > chartIndex2! ? chartIndex1 : chartIndex2;
+
+        // Draw a line between each pair of consecutive data points
+        canvas.drawLine(
+            Offset(x1, y1),
+            Offset(x2, y2),
+            i >= firstPoint && i <= secondPoint
+                ? pressedChartPaint
+                : chartPaint);
+
+        if (i == 0) {
+          onChartPath2.moveTo(x2, y2);
+        }
+        if (i < firstPoint) {
+          onChartPath1.lineTo(x2, y2);
+        } else if (i == firstPoint) {
+          onChartPath1.moveTo(x2, y2);
+        } else if (i > firstPoint && i <= secondPoint) {
+          onChartPath2.lineTo(x2, y2);
+        } else if (i > secondPoint) {
+          onChartPath1.lineTo(x2, y2);
+        }
+        if (i == secondPoint) {
+          onChartPath2.moveTo(x2, y2);
+        }
       } else {
-        onChartPath2.lineTo(x2, y2);
+        // Draw a line between each pair of consecutive data points
+        canvas.drawLine(Offset(x1, y1), Offset(x2, y2),
+            chartIndex1 <= i ? chartPaint : pressedChartPaint);
+
+        if (i == chartIndex1 - 1) {
+          onChartPath2.moveTo(x2, y2);
+        }
+        if (i < chartIndex1) {
+          onChartPath1.lineTo(x2, y2);
+        } else {
+          onChartPath2.lineTo(x2, y2);
+        }
       }
     }
 
@@ -313,118 +348,487 @@ class StockPriceChartPainter extends CustomPainter {
       'Dec'
     ];
 
-    TextPainter pricePainter = TextPainter(
+    //------------------- POINT 1 -------------------//
+
+    TextPainter pricePainter1 = TextPainter(
       textAlign: TextAlign.right,
       textDirection: TextDirection.ltr,
     );
 
-    pricePainter.text = TextSpan(
+    pricePainter1.text = TextSpan(
       text: prices[chartIndex1].toString(),
       style: const TextStyle(color: Colors.black, fontSize: 16),
     );
 
-    pricePainter.layout();
+    pricePainter1.layout();
 
-    TextPainter percentagePainter = TextPainter(
+    TextPainter percentagePainter1 = TextPainter(
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
     );
-    double percentage =
+    double percentage1 =
         (prices[chartIndex1] - prices.first) / prices.first * 100;
-    Color percentageColor =
-        percentage >= 0 ? Colors.green.shade700 : Colors.red;
-    percentagePainter.text = TextSpan(
-      text: percentage > 0
-          ? '+${percentage.toStringAsFixed(2)}%'
-          : '${percentage.toStringAsFixed(2)}%',
-      style: TextStyle(color: percentageColor, fontSize: 16),
+    Color percentageColor1 =
+        percentage1 >= 0 ? Colors.green.shade700 : Colors.red;
+    percentagePainter1.text = TextSpan(
+      text: percentage1 > 0
+          ? '+${percentage1.toStringAsFixed(2)}%'
+          : '${percentage1.toStringAsFixed(2)}%',
+      style: TextStyle(color: percentageColor1, fontSize: 16),
     );
-    percentagePainter.layout();
+    percentagePainter1.layout();
 
-    TextPainter datePainter = TextPainter(
+    TextPainter datePainter1 = TextPainter(
       textAlign: TextAlign.right,
       textDirection: TextDirection.ltr,
     );
 
-    String displayDate =
+    String displayDate1 =
         '${dates[chartIndex1].day} ${monthNames[dates[chartIndex1].month]} ${dates[chartIndex1].year}';
-    datePainter.text = TextSpan(
-      text: displayDate,
+    datePainter1.text = TextSpan(
+      text: displayDate1,
       style: const TextStyle(color: Colors.black, fontSize: 14),
     );
 
-    datePainter.layout();
+    datePainter1.layout();
 
-    double labelRectWidth = pricePainter.width + percentagePainter.width + 36;
-    double labelRectHeight = pricePainter.height + datePainter.height + 12;
+    double labelRectWidth1 = pricePainter1.width + percentagePainter1.width;
+    double labelRectHeight = pricePainter1.height + datePainter1.height;
+    if (pricePoint2 != null) {
+      labelRectWidth1 = pricePainter1.width >= datePainter1.width
+          ? pricePainter1.width
+          : datePainter1.width;
+    }
+
+    // Adding Padding to the shape
+    labelRectWidth1 += 12;
+    labelRectHeight += 12;
+
+    double boundedLabelRectDx1 = 0;
+    bool bounded1 = false;
+    if (chartAxis[chartIndex1].dx <= labelRectWidth1 / 2) {
+      bounded1 = true;
+      boundedLabelRectDx1 = 0;
+    } else if (chartAxis[chartIndex1].dx >= size.width - labelRectWidth1 / 2) {
+      bounded1 = true;
+      boundedLabelRectDx1 = size.width - labelRectWidth1;
+    }
+
+    Rect labelRect1 = Rect.fromLTWH(
+        bounded1
+            ? boundedLabelRectDx1
+            : chartAxis[chartIndex1].dx - labelRectWidth1 / 2,
+        -40,
+        labelRectWidth1,
+        labelRectHeight);
+    // Draw grey background behind the text labels
+    const radius = Radius.circular(4); // Adjust the radius as needed
+
+    final backgroundPaint = Paint()
+      ..color = Colors.grey.withOpacity(0.2) // Color of the rectangle
+      ..style = PaintingStyle.fill;
+
+    //------------------- POINT 2 -------------------//
+
+    TextPainter pricePainter2 = TextPainter(
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.ltr,
+    );
+
+    pricePainter2.text = TextSpan(
+      text: prices[chartIndex2!].toString(),
+      style: const TextStyle(color: Colors.black, fontSize: 16),
+    );
+
+    pricePainter2.layout();
+
+    TextPainter percentagePainter2 = TextPainter(
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+    double percentage2 =
+        (prices[chartIndex2] - prices.first) / prices.first * 100;
+    Color percentageColor2 =
+        percentage2 >= 0 ? Colors.green.shade700 : Colors.red;
+    percentagePainter2.text = TextSpan(
+      text: percentage2 > 0
+          ? '+${percentage2.toStringAsFixed(2)}%'
+          : '${percentage2.toStringAsFixed(2)}%',
+      style: TextStyle(color: percentageColor2, fontSize: 16),
+    );
+    percentagePainter2.layout();
+
+    TextPainter datePainter2 = TextPainter(
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.ltr,
+    );
+
+    String displayDate2 =
+        '${dates[chartIndex2].day} ${monthNames[dates[chartIndex2].month]} ${dates[chartIndex1].year}';
+    datePainter2.text = TextSpan(
+      text: displayDate2,
+      style: const TextStyle(color: Colors.black, fontSize: 14),
+    );
+
+    datePainter2.layout();
+
+    double labelRectWidth2 = pricePainter2.width + percentagePainter2.width;
+
     if (pricePoint1 != null) {
-      double boundedLabelRectDx = 0;
-      bool bounded = false;
-      if (chartAxis[chartIndex1].dx <= labelRectWidth / 2) {
-        bounded = true;
-        boundedLabelRectDx = 0;
-      } else if (chartAxis[chartIndex1].dx >= size.width - labelRectWidth / 2) {
-        bounded = true;
-        boundedLabelRectDx = size.width - labelRectWidth;
+      labelRectWidth2 = pricePainter2.width >= datePainter2.width
+          ? pricePainter2.width
+          : datePainter2.width;
+    }
+
+    // Adding Padding to the shape
+    labelRectWidth2 += 12;
+
+    double boundedLabelRectDx2 = 0;
+    bool bounded2 = false;
+    if (chartAxis[chartIndex2].dx <= labelRectWidth2 / 2) {
+      bounded2 = true;
+      boundedLabelRectDx2 = 0;
+    } else if (chartAxis[chartIndex2].dx >= size.width - labelRectWidth2 / 2) {
+      bounded2 = true;
+      boundedLabelRectDx2 = size.width - labelRectWidth2;
+    }
+
+    Rect labelRect2 = Rect.fromLTWH(
+        bounded2
+            ? boundedLabelRectDx2
+            : chartAxis[chartIndex2].dx - labelRectWidth2 / 2,
+        -40,
+        labelRectWidth2,
+        labelRectHeight);
+    // Draw grey background behind the text labels
+
+    //------------------- POINT 3 -------------------//
+
+    double price1 =
+        chartIndex1 <= chartIndex2! ? prices[chartIndex1] : prices[chartIndex2];
+    double price2 =
+        chartIndex1 <= chartIndex2 ? prices[chartIndex2] : prices[chartIndex1];
+    List<String> price2ListString = price2.toString().split('.');
+    List<String> price1ListString = price1.toString().split('.');
+    int fixedDecimalPoint;
+
+    if (price1ListString.length > 1 && price2ListString.length > 1) {
+      fixedDecimalPoint =
+          price1ListString[1].length >= price2ListString[1].length
+              ? price1ListString[1].length
+              : price2ListString[1].length;
+    } else if (price1ListString.length > 1) {
+      fixedDecimalPoint = price1ListString.length;
+    } else if (price2ListString.length > 1) {
+      fixedDecimalPoint = price2ListString.length;
+    } else {
+      fixedDecimalPoint = 0;
+    }
+
+    Color priceColor = price2 > price1 ? Colors.green : Colors.red;
+
+    String pointDifference =
+        (price2 - price1).toStringAsFixed(fixedDecimalPoint);
+    String pointPercentage =
+        '${((price2 - price1) / price1 * 100).toStringAsFixed(2)}%';
+
+    TextPainter priceDifferencePainter = TextPainter(
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.ltr,
+    );
+
+    priceDifferencePainter.text = TextSpan(
+      text: pointDifference,
+      style: TextStyle(color: priceColor, fontSize: 14),
+    );
+
+    priceDifferencePainter.layout();
+
+    TextPainter percentageDifferencePainter = TextPainter(
+      textAlign: TextAlign.right,
+      textDirection: TextDirection.ltr,
+    );
+
+    percentageDifferencePainter.text = TextSpan(
+      text: pointPercentage[0] == '-' ? pointPercentage : '+$pointPercentage',
+      style: TextStyle(color: priceColor, fontSize: 14),
+    );
+
+    percentageDifferencePainter.layout();
+
+    double labelDifferenceRectMinWidth =
+        priceDifferencePainter.width >= percentageDifferencePainter.width
+            ? priceDifferencePainter.width + 30
+            : percentageDifferencePainter.width + 30;
+
+    double firstRectDx = labelRect1.center.dx <= labelRect2.center.dx
+        ? labelRect1.centerRight.dx
+        : labelRect2.centerRight.dx;
+
+    double secondRectDx = labelRect1.center.dx >= labelRect2.center.dx
+        ? labelRect1.centerLeft.dx
+        : labelRect2.centerLeft.dx;
+    double labelDifferenceRectMaxWidth = secondRectDx - firstRectDx;
+
+    double labelDifferenceRectWidth =
+        labelDifferenceRectMaxWidth >= labelDifferenceRectMinWidth
+            ? labelDifferenceRectMaxWidth
+            : labelDifferenceRectMinWidth;
+
+    int chartIndex = chartIndex1 < chartIndex2 ? chartIndex1 : chartIndex2;
+
+    double labelDiffernceDx = labelDifferenceRectWidth ==
+                labelDifferenceRectMinWidth &&
+            !bounded2 &&
+            !bounded1
+        ? (chartAxis[chartIndex1].dx - chartAxis[chartIndex2].dx).abs() / 2 +
+            chartAxis[chartIndex].dx
+        : (firstRectDx - secondRectDx).abs() / 2 + firstRectDx;
+
+    Rect labelDifferenceRect = Rect.fromLTWH(
+        labelDiffernceDx - labelDifferenceRectWidth / 2,
+        -40,
+        labelDifferenceRectWidth,
+        labelRectHeight);
+
+    final labelDifferencePaint = Paint()
+      ..color = priceColor.withOpacity(0.2)
+      ..style = PaintingStyle.fill;
+
+    //------------------- PAINTING EACH POINT -------------------//
+
+    // To remove the second point if it is the same as the first.
+    pricePoint2 = chartIndex1 == chartIndex2 ? null : pricePoint2;
+
+    if (pricePoint1 != null && pricePoint2 != null) {
+      canvas.drawRect(labelDifferenceRect, labelDifferencePaint);
+      if (labelDiffernceDx >=
+          size.width - labelDifferenceRectWidth / 2 - labelRectWidth1) {
+        bounded1 = true;
+        boundedLabelRectDx1 = size.width - labelRectWidth1;
+      } else if (labelDiffernceDx <=
+          labelDifferenceRectWidth / 2 + labelRectWidth1) {
+        bounded1 = true;
+        boundedLabelRectDx1 = 0;
+      } else if (labelDiffernceDx >=
+          size.width - labelDifferenceRectWidth / 2 - labelRectWidth2) {
+        bounded2 = true;
+        boundedLabelRectDx2 = size.width - labelRectWidth1;
+      } else if (labelDiffernceDx <=
+          labelDifferenceRectWidth / 2 + labelRectWidth2) {
+        bounded2 = true;
+        boundedLabelRectDx2 = 0;
       }
 
-      Rect labelRect = Rect.fromLTWH(
-          bounded
-              ? boundedLabelRectDx
-              : chartAxis[chartIndex1].dx - labelRectWidth / 2,
-          -40,
-          labelRectWidth,
-          labelRectHeight
-          // Add padding above and below the text
-          );
-      // Draw grey background behind the text labels
-      const radius = Radius.circular(4); // Adjust the radius as needed
-      final roundedRect = RRect.fromRectAndCorners(labelRect,
+      percentageDifferencePainter.paint(
+          canvas,
+          Offset(
+              labelDiffernceDx - percentageDifferencePainter.width / 2, -20));
+
+      priceDifferencePainter.paint(canvas,
+          Offset(labelDiffernceDx - priceDifferencePainter.width / 2, -36));
+    }
+
+    if (pricePoint1 != null) {
+      bool differenceOverlap1 = labelDifferenceRectWidth ==
+              labelDifferenceRectMinWidth
+          ? chartAxis[chartIndex2].dx + labelRectWidth2 / 2 >= firstRectDx &&
+              chartAxis[chartIndex2].dx - labelRectWidth2 / 2 <= secondRectDx
+          : false;
+
+      bool rightClosest1 = chartAxis[chartIndex1].dx - labelDiffernceDx >= 0;
+      double pricePainter1Dx;
+      double datePainter1Dx;
+
+      if (differenceOverlap1) {
+        pricePainter1Dx = rightClosest1
+            ? labelDiffernceDx +
+                labelDifferenceRectWidth / 2 +
+                labelRectWidth1 / 2 -
+                pricePainter1.width / 2
+            : labelDiffernceDx -
+                labelDifferenceRectWidth / 2 -
+                labelRectWidth1 / 2 -
+                pricePainter1.width / 2;
+        datePainter1Dx = rightClosest1
+            ? labelDiffernceDx +
+                labelDifferenceRectWidth / 2 +
+                labelRectWidth1 / 2 -
+                datePainter1.width / 2
+            : labelDiffernceDx -
+                labelDifferenceRectWidth / 2 -
+                labelRectWidth1 / 2 -
+                datePainter1.width / 2;
+
+        labelRect1 = Rect.fromLTWH(
+            bounded1
+                ? boundedLabelRectDx1
+                : rightClosest1
+                    ? labelDiffernceDx + labelDifferenceRectWidth / 2
+                    : labelDiffernceDx -
+                        labelRectWidth1 -
+                        labelDifferenceRectWidth / 2,
+            -40,
+            labelRectWidth1,
+            labelRectHeight);
+      } else {
+        pricePainter1Dx = chartAxis[chartIndex1].dx - pricePainter1.width / 2;
+        datePainter1Dx = chartAxis[chartIndex1].dx - datePainter1.width / 2;
+      }
+      final roundedRect = RRect.fromRectAndCorners(labelRect1,
+          topLeft: radius,
+          topRight: radius,
+          bottomLeft: radius,
+          bottomRight: radius);
+      canvas.drawRRect(roundedRect, Paint()..color = Colors.red);
+      if (pricePoint2 == null) {
+        pricePainter1.paint(
+            canvas,
+            Offset(
+                bounded1
+                    ? boundedLabelRectDx1 +
+                        labelRectWidth1 / 4 -
+                        pricePainter1.width / 2
+                    : chartAxis[chartIndex1].dx -
+                        pricePainter1.width / 2 -
+                        labelRectWidth1 / 4,
+                -36));
+
+        percentagePainter1.paint(
+            canvas,
+            Offset(
+                bounded1
+                    ? boundedLabelRectDx1 +
+                        labelRectWidth1 / 4 +
+                        pricePainter1.width / 2 +
+                        12
+                    : chartAxis[chartIndex1].dx +
+                        pricePainter1.width / 2 -
+                        labelRectWidth1 / 4 +
+                        12,
+                -36));
+      } else {
+        pricePainter1.paint(
+            canvas,
+            Offset(
+                bounded1
+                    ? boundedLabelRectDx1 +
+                        labelRectWidth1 / 2 -
+                        pricePainter1.width / 2
+                    : pricePainter1Dx,
+                -36));
+      }
+      datePainter1.paint(
+          canvas,
+          Offset(
+              bounded1
+                  ? boundedLabelRectDx1 +
+                      labelRectWidth1 / 2 -
+                      datePainter1.width / 2
+                  : datePainter1Dx,
+              -36 + percentagePainter1.height + 2));
+    }
+    if (pricePoint2 != null) {
+      bool differenceOverlap2 = labelDifferenceRectWidth ==
+              labelDifferenceRectMinWidth
+          ? chartAxis[chartIndex2].dx + labelRectWidth2 / 2 >= firstRectDx &&
+              chartAxis[chartIndex2].dx - labelRectWidth2 / 2 <= secondRectDx
+          : false;
+
+      bool rightClosest2 = chartAxis[chartIndex2].dx - labelDiffernceDx >= 0;
+
+      double datePainter2Dx;
+      double pricePainter2Dx;
+      if (differenceOverlap2) {
+        pricePainter2Dx = rightClosest2
+            ? labelDiffernceDx +
+                labelDifferenceRectWidth / 2 +
+                labelRectWidth2 / 2 -
+                pricePainter2.width / 2
+            : labelDiffernceDx -
+                labelDifferenceRectWidth / 2 -
+                labelRectWidth2 / 2 -
+                pricePainter2.width / 2;
+        datePainter2Dx = rightClosest2
+            ? labelDiffernceDx +
+                labelDifferenceRectWidth / 2 +
+                labelRectWidth2 / 2 -
+                datePainter2.width / 2
+            : labelDiffernceDx -
+                labelDifferenceRectWidth / 2 -
+                labelRectWidth2 / 2 -
+                datePainter2.width / 2;
+
+        labelRect2 = Rect.fromLTWH(
+            bounded2
+                ? boundedLabelRectDx2
+                : rightClosest2
+                    ? labelDiffernceDx + labelDifferenceRectWidth / 2
+                    : labelDiffernceDx -
+                        labelRectWidth2 -
+                        labelDifferenceRectWidth / 2,
+            -40,
+            labelRectWidth2,
+            labelRectHeight);
+      } else {
+        datePainter2Dx = chartAxis[chartIndex2].dx - datePainter2.width / 2;
+        pricePainter2Dx = chartAxis[chartIndex2].dx - pricePainter2.width / 2;
+      }
+
+      final roundedRect2 = RRect.fromRectAndCorners(labelRect2,
           topLeft: radius,
           topRight: radius,
           bottomLeft: radius,
           bottomRight: radius);
 
-      final backgroundPaint = Paint()
-        ..color = Colors.grey.withOpacity(0.5) // Color of the rectangle
-        ..style = PaintingStyle.fill;
+      canvas.drawRRect(roundedRect2, Paint()..color = Colors.blue);
 
-      canvas.drawRRect(roundedRect, backgroundPaint);
-      pricePainter.paint(
+      if (pricePoint1 == null) {
+        pricePainter2.paint(
+            canvas,
+            Offset(
+                bounded2
+                    ? boundedLabelRectDx2 +
+                        labelRectWidth2 / 4 -
+                        pricePainter2.width / 2
+                    : chartAxis[chartIndex2].dx -
+                        pricePainter2.width / 2 -
+                        labelRectWidth2 / 4,
+                -36));
+        percentagePainter2.paint(
+            canvas,
+            Offset(
+                bounded2
+                    ? boundedLabelRectDx2 +
+                        labelRectWidth2 / 4 +
+                        pricePainter2.width / 2 +
+                        12
+                    : chartAxis[chartIndex2].dx +
+                        pricePainter2.width / 2 -
+                        labelRectWidth2 / 4 +
+                        12,
+                -36));
+      } else {
+        pricePainter2.paint(
+            canvas,
+            Offset(
+                bounded2
+                    ? boundedLabelRectDx2 +
+                        labelRectWidth2 / 2 -
+                        pricePainter2.width / 2
+                    : pricePainter2Dx,
+                -36));
+      }
+
+      datePainter2.paint(
           canvas,
           Offset(
-              bounded
-                  ? boundedLabelRectDx +
-                      labelRectWidth / 4 -
-                      pricePainter.width / 2
-                  : chartAxis[chartIndex1].dx -
-                      pricePainter.width / 2 -
-                      labelRectWidth / 4,
-              -36));
-
-      percentagePainter.paint(
-          canvas,
-          Offset(
-              bounded
-                  ? boundedLabelRectDx +
-                      labelRectWidth / 4 +
-                      pricePainter.width / 2 +
-                      12
-                  : chartAxis[chartIndex1].dx +
-                      pricePainter.width / 2 -
-                      labelRectWidth / 4 +
-                      12,
-              -36));
-
-      datePainter.paint(
-          canvas,
-          Offset(
-              bounded
-                  ? boundedLabelRectDx +
-                      labelRectWidth / 2 -
-                      datePainter.width / 2
-                  : chartAxis[chartIndex1].dx - datePainter.width / 2,
-              -36 + percentagePainter.height + 2));
+              bounded2
+                  ? boundedLabelRectDx2 +
+                      labelRectWidth2 / 2 -
+                      datePainter2.width / 2
+                  : datePainter2Dx,
+              -36 + percentagePainter2.height + 2));
     }
 
     if (pricePoint1 == null) {
@@ -505,7 +909,7 @@ class StockPriceChartPainter extends CustomPainter {
         yLabelPainter.paint(canvas, Offset(10, y));
       }
     }
-    // Define the number of divisions for the x-axis
+
     int xDivisions = 6;
     double xDivisionInterval =
         (maxDate.millisecondsSinceEpoch - minDate.millisecondsSinceEpoch) /
