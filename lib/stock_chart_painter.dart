@@ -121,7 +121,7 @@ class StockPriceChartPainter extends CustomPainter {
     }
 
     int firstPoint = chartIndex1 <= chartIndex2 ? chartIndex1 : chartIndex2;
-    int secondPoint = chartIndex1 > chartIndex2 ? chartIndex1 : chartIndex2;
+    int secondPoint = chartIndex1 >= chartIndex2 ? chartIndex1 : chartIndex2;
     // To remove the second point if it is the same as the first.
     pricePoint2 = chartIndex1 == chartIndex2 ? null : pricePoint2;
 
@@ -153,7 +153,6 @@ class StockPriceChartPainter extends CustomPainter {
       double y1 = chartAxis[i].dy;
       double x2 = chartAxis[i + 1].dx;
       double y2 = chartAxis[i + 1].dy;
-
       // Add points to the path for the gradient area
       chartPath.lineTo(x2, y2);
       if (pricePoint1 != null && pricePoint2 != null) {
@@ -165,7 +164,9 @@ class StockPriceChartPainter extends CustomPainter {
                 ? pressedChartPaint2
                 : chartPaint);
 
-        if (i == 0) {
+        bool closedPath1 = false;
+
+        if (i == 0 && firstPoint != 0) {
           onChartPath2.moveTo(0, gradientBottomY);
           onChartPath2.lineTo(x1, y1);
           onChartPath2.lineTo(x2, y2);
@@ -180,11 +181,26 @@ class StockPriceChartPainter extends CustomPainter {
           onChartPath1.lineTo(x2, y2);
         } else if (i == secondPoint) {
           onChartPath1.lineTo(x1, gradientBottomY);
+          closedPath1 = true;
+
           onChartPath2.moveTo(x1, gradientBottomY);
           onChartPath2.lineTo(x1, y1);
           onChartPath2.lineTo(x2, y2);
+
+          // This is not the presumable solution but fixes the bug.
+          if (i == chartAxis.length - 2) {
+            onChartPath2.lineTo(x2, gradientBottomY);
+          }
         } else if (i > secondPoint) {
           onChartPath2.lineTo(x2, y2);
+
+          // Don't remove. fixes bugg
+          if (i == chartAxis.length - 2) {
+            onChartPath2.lineTo(x2, gradientBottomY);
+          }
+        }
+        if (i == chartAxis.length - 2 && !closedPath1) {
+          onChartPath1.lineTo(x2, gradientBottomY);
         }
       } else {
         // Draw a line between each pair of consecutive data points
@@ -232,7 +248,6 @@ class StockPriceChartPainter extends CustomPainter {
           Paint()
             ..shader = gradientShader1
             ..style = PaintingStyle.fill);
-      onChartPath2.lineTo(size.width, gradientBottomY);
       onChartPath2.close();
       canvas.drawPath(
           onChartPath2,
@@ -640,9 +655,7 @@ class StockPriceChartPainter extends CustomPainter {
     int chartIndex = chartIndex1 < chartIndex2 ? chartIndex1 : chartIndex2;
 
     double labelDiffernceDx = labelDifferenceRectWidth ==
-                labelDifferenceRectMinWidth &&
-            !bounded2 &&
-            !bounded1
+            labelDifferenceRectMinWidth
         ? (chartAxis[chartIndex1].dx - chartAxis[chartIndex2].dx).abs() / 2 +
             chartAxis[chartIndex].dx
         : (firstRectDx - secondRectDx).abs() / 2 + firstRectDx;
@@ -663,20 +676,20 @@ class StockPriceChartPainter extends CustomPainter {
       canvas.drawRect(labelDifferenceRect, labelDifferencePaint);
       if (labelDiffernceDx >=
           size.width - labelDifferenceRectWidth / 2 - labelRectWidth1) {
-        bounded1 = true;
-        boundedLabelRectDx1 = size.width - labelRectWidth1;
+        // bounded1 = true;
+        // boundedLabelRectDx1 = size.width - labelRectWidth1;
       } else if (labelDiffernceDx <=
           labelDifferenceRectWidth / 2 + labelRectWidth1) {
-        bounded1 = true;
-        boundedLabelRectDx1 = 0;
+        // bounded1 = true;
+        // boundedLabelRectDx1 = 0;
       } else if (labelDiffernceDx >=
           size.width - labelDifferenceRectWidth / 2 - labelRectWidth2) {
-        bounded2 = true;
-        boundedLabelRectDx2 = size.width - labelRectWidth1;
+        // bounded2 = true;
+        // boundedLabelRectDx2 = size.width - labelRectWidth1;
       } else if (labelDiffernceDx <=
           labelDifferenceRectWidth / 2 + labelRectWidth2) {
-        bounded2 = true;
-        boundedLabelRectDx2 = 0;
+        // bounded2 = true;
+        // boundedLabelRectDx2 = 0;
       }
 
       percentageDifferencePainter.paint(
