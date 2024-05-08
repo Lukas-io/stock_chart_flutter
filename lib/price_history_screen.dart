@@ -106,7 +106,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 0, vertical: 40.0),
                 child: CustomPaint(
-                  size: Size(MediaQuery.of(context).size.width - 10, 200.0),
+                  size: Size(MediaQuery.of(context).size.width - 5, 200.0),
                   painter: StockPriceChartPainter(
                       stockPriceHistory!, onPress1, onPress2),
                 ),
