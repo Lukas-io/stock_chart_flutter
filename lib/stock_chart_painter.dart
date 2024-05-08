@@ -16,13 +16,18 @@ class StockPriceChartPainter extends CustomPainter {
     Offset? pricePoint1 = this.pricePoint1;
     Offset? pricePoint2 = this.pricePoint2;
 
+    if (pricePoint1 == null && pricePoint2 != null) {
+      pricePoint1 = pricePoint2;
+      pricePoint2 = null;
+    }
+
     List<DateTime> dates = [];
     List<double> prices = [];
     List<Offset> chartAxis = [];
     Offset? placedPoint1;
-    int? chartIndex1;
+    int chartIndex1;
     Offset? placedPoint2;
-    int? chartIndex2;
+    int chartIndex2;
 
     for (var data in stockPriceHistory) {
       dates.add(data.dateTime);
@@ -115,18 +120,32 @@ class StockPriceChartPainter extends CustomPainter {
       }
     }
 
-    bool changes =
-        (prices[chartIndex1!] - prices.first) / prices.first * 100 < 0;
+    int firstPoint = chartIndex1 <= chartIndex2 ? chartIndex1 : chartIndex2;
+    int secondPoint = chartIndex1 > chartIndex2 ? chartIndex1 : chartIndex2;
+    // To remove the second point if it is the same as the first.
+    pricePoint2 = chartIndex1 == chartIndex2 ? null : pricePoint2;
 
-    Color pressedPaintColor = changes ? Colors.red : Colors.green;
+    bool changes1 =
+        (prices[chartIndex1] - prices.first) / prices.first * 100 < 0;
+    bool changes2 =
+        (prices[secondPoint] - prices[firstPoint]) / prices[firstPoint] * 100 <
+            0;
+
+    Color pressedPaintColor1 = changes1 ? Colors.red : Colors.green;
+    Color pressedPaintColor2 = changes2 ? Colors.red : Colors.green;
     Color paintColor = prices.first > prices.last ? Colors.red : Colors.green;
 
     Paint chartPaint = Paint()
       ..color = paintColor.withOpacity(0.4)
       ..strokeWidth = 1.5;
-    Paint pressedChartPaint = Paint()
-      ..color = pressedPaintColor
-      ..strokeWidth = 2; // Adjust the thickness of the lines as needed
+    Paint pressedChartPaint1 = Paint()
+      ..color = pressedPaintColor1
+      ..strokeWidth = 2;
+    Paint pressedChartPaint2 = Paint()
+      ..color = pressedPaintColor2
+      ..strokeWidth = 2;
+
+    double gradientBottomY = size.height + (0.3 * size.height);
 
     // Draw lines between each pair of consecutive data points
     for (int i = 0; i < chartAxis.length - 1; i++) {
@@ -138,38 +157,39 @@ class StockPriceChartPainter extends CustomPainter {
       // Add points to the path for the gradient area
       chartPath.lineTo(x2, y2);
       if (pricePoint1 != null && pricePoint2 != null) {
-        int firstPoint =
-            chartIndex1 <= chartIndex2! ? chartIndex1 : chartIndex2;
-        int secondPoint =
-            chartIndex1 > chartIndex2! ? chartIndex1 : chartIndex2;
-
         // Draw a line between each pair of consecutive data points
         canvas.drawLine(
             Offset(x1, y1),
             Offset(x2, y2),
-            i >= firstPoint && i <= secondPoint
-                ? pressedChartPaint
+            i >= firstPoint && i < secondPoint
+                ? pressedChartPaint2
                 : chartPaint);
 
         if (i == 0) {
-          onChartPath2.moveTo(x2, y2);
-        }
-        if (i < firstPoint) {
-          onChartPath1.lineTo(x2, y2);
+          onChartPath2.moveTo(0, gradientBottomY);
+          onChartPath2.lineTo(x1, y1);
+          onChartPath2.lineTo(x2, y2);
+        } else if (i < firstPoint) {
+          onChartPath2.lineTo(x2, y2);
         } else if (i == firstPoint) {
-          onChartPath1.moveTo(x2, y2);
-        } else if (i > firstPoint && i <= secondPoint) {
+          onChartPath2.lineTo(x1, gradientBottomY);
+          onChartPath1.moveTo(x1, gradientBottomY);
+          onChartPath1.lineTo(x1, y1);
+          onChartPath1.lineTo(x2, y2);
+        } else if (i > firstPoint && i < secondPoint) {
+          onChartPath1.lineTo(x2, y2);
+        } else if (i == secondPoint) {
+          onChartPath1.lineTo(x1, gradientBottomY);
+          onChartPath2.moveTo(x1, gradientBottomY);
+          onChartPath2.lineTo(x1, y1);
           onChartPath2.lineTo(x2, y2);
         } else if (i > secondPoint) {
-          onChartPath1.lineTo(x2, y2);
-        }
-        if (i == secondPoint) {
-          onChartPath2.moveTo(x2, y2);
+          onChartPath2.lineTo(x2, y2);
         }
       } else {
         // Draw a line between each pair of consecutive data points
         canvas.drawLine(Offset(x1, y1), Offset(x2, y2),
-            chartIndex1 <= i ? chartPaint : pressedChartPaint);
+            chartIndex1 <= i ? chartPaint : pressedChartPaint1);
 
         if (i == chartIndex1 - 1) {
           onChartPath2.moveTo(x2, y2);
@@ -182,14 +202,48 @@ class StockPriceChartPainter extends CustomPainter {
       }
     }
 
-    double gradientBottomY =
-        size.height + (0.3 * size.height); // Adjust the percentage as needed
+    // Adjust the percentage as needed
 
-    if (pricePoint1 != null) {
+    if (pricePoint1 != null && pricePoint2 != null) {
       // Define colors for the gradient
       Color startColor1 =
-          pressedPaintColor.withOpacity(0.2); // Adjust opacity as needed
-      Color endColor1 = pressedPaintColor.withOpacity(0.01);
+          pressedPaintColor2.withOpacity(0.2); // Adjust opacity as needed
+      Color endColor1 = pressedPaintColor2.withOpacity(0.01);
+      Color startColor2 =
+          paintColor.withOpacity(0.05); // Adjust opacity as needed
+      Color endColor2 =
+          paintColor.withOpacity(0.01); // Fully transparent color at the bottom
+
+      // Create a gradient shader
+      Shader gradientShader1 = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [startColor1, endColor1],
+      ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
+      Shader gradientShader2 = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [startColor2, endColor2],
+      ).createShader(Rect.fromLTRB(0, 0, size.width, gradientBottomY));
+
+      onChartPath1.close();
+      canvas.drawPath(
+          onChartPath1,
+          Paint()
+            ..shader = gradientShader1
+            ..style = PaintingStyle.fill);
+      onChartPath2.lineTo(size.width, gradientBottomY);
+      onChartPath2.close();
+      canvas.drawPath(
+          onChartPath2,
+          Paint()
+            ..shader = gradientShader2
+            ..style = PaintingStyle.fill);
+    } else if (pricePoint1 != null) {
+      // Define colors for the gradient
+      Color startColor1 =
+          pressedPaintColor1.withOpacity(0.2); // Adjust opacity as needed
+      Color endColor1 = pressedPaintColor1.withOpacity(0.01);
       Color startColor2 =
           paintColor.withOpacity(0.05); // Adjust opacity as needed
       Color endColor2 =
@@ -288,6 +342,8 @@ class StockPriceChartPainter extends CustomPainter {
 
         dash = !dash;
       }
+      canvas.drawCircle(
+          placedPoint2 ?? Offset(lastX, lastY), 5, pressedChartPaint2);
     }
 
     if (pricePoint1 != null) {
@@ -310,8 +366,13 @@ class StockPriceChartPainter extends CustomPainter {
 
         dash = !dash;
       }
-      canvas.drawCircle(placedPoint1 ?? Offset(lastX, lastY), 5,
-          Paint()..color = pressedPaintColor);
+      if (pricePoint2 != null) {
+        canvas.drawCircle(placedPoint1 ?? Offset(lastX, lastY), 5,
+            Paint()..color = pressedPaintColor2);
+      } else {
+        canvas.drawCircle(placedPoint1 ?? Offset(lastX, lastY), 5,
+            Paint()..color = pressedPaintColor1);
+      }
     } else {
       double dashPosition = lastX;
       double stopDashPosition = lastX - dashLength;
@@ -332,6 +393,7 @@ class StockPriceChartPainter extends CustomPainter {
       }
       canvas.drawCircle(Offset(lastX, lastY), 5, Paint()..color = paintColor);
     }
+
     List<String> monthNames = [
       'Empty',
       'Jan',
@@ -596,9 +658,6 @@ class StockPriceChartPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     //------------------- PAINTING EACH POINT -------------------//
-
-    // To remove the second point if it is the same as the first.
-    pricePoint2 = chartIndex1 == chartIndex2 ? null : pricePoint2;
 
     if (pricePoint1 != null && pricePoint2 != null) {
       canvas.drawRect(labelDifferenceRect, labelDifferencePaint);
