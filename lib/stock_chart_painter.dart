@@ -715,10 +715,6 @@ class StockPriceChartPainter extends CustomPainter {
 
     bool trueRight1 = chartAxis[chartIndex1].dx > chartAxis[chartIndex2].dx;
     bool trueRight2 = chartAxis[chartIndex2].dx > chartAxis[chartIndex1].dx;
-    //
-    // print(bounded1);
-    // print(bounded2);
-    // print('Swappable $swappable');
 
     if (pricePoint1 != null) {
       bool differenceOverlap1 = labelDifferenceRectWidth ==
@@ -835,8 +831,7 @@ class StockPriceChartPainter extends CustomPainter {
       }
       double datePainter2Dx;
       double pricePainter2Dx;
-      print(differenceOverlap2);
-      print(pricePoint1);
+
       if (differenceOverlap2 && pricePoint1 != null) {
         pricePainter2Dx = onRight2
             ? labelDiffernceDx +
@@ -929,7 +924,7 @@ class StockPriceChartPainter extends CustomPainter {
               -36 + percentagePainter2.height + 2));
     }
     // print(labelRect1.center.dx);
-    // print(labelRect2.center.dx);
+    print(labelRect2.centerLeft.dx);
     if (pricePoint1 == null) {
       // Draw y-axis labels with divisions
       TextPainter yLabelPainter = TextPainter(
