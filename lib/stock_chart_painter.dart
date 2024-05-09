@@ -86,10 +86,10 @@ class StockPriceChartPainter extends CustomPainter {
       for (int i = 0; i < chartAxis.length - 1; i++) {
         double horizontalAxis1 = chartAxis[i].dx;
         double horizontalAxis2 = chartAxis[i + 1].dx;
-        if (pricePoint1!.dx >= horizontalAxis1 &&
-            pricePoint1!.dx <= horizontalAxis2) {
-          double difference1 = horizontalAxis1 - pricePoint1!.dx;
-          double difference2 = horizontalAxis2 - pricePoint1!.dx;
+        if (pricePoint1.dx >= horizontalAxis1 &&
+            pricePoint1.dx <= horizontalAxis2) {
+          double difference1 = horizontalAxis1 - pricePoint1.dx;
+          double difference2 = horizontalAxis2 - pricePoint1.dx;
 
           if (difference1.abs() <= difference2.abs()) {
             placedPoint1 = chartAxis[i];
@@ -105,10 +105,10 @@ class StockPriceChartPainter extends CustomPainter {
       for (int i = 0; i < chartAxis.length - 1; i++) {
         double horizontalAxis1 = chartAxis[i].dx;
         double horizontalAxis2 = chartAxis[i + 1].dx;
-        if (pricePoint2!.dx >= horizontalAxis1 &&
-            pricePoint2!.dx <= horizontalAxis2) {
-          double difference1 = horizontalAxis1 - pricePoint2!.dx;
-          double difference2 = horizontalAxis2 - pricePoint2!.dx;
+        if (pricePoint2.dx >= horizontalAxis1 &&
+            pricePoint2.dx <= horizontalAxis2) {
+          double difference1 = horizontalAxis1 - pricePoint2.dx;
+          double difference2 = horizontalAxis2 - pricePoint2.dx;
 
           if (difference1.abs() <= difference2.abs()) {
             placedPoint2 = chartAxis[i];
@@ -500,7 +500,8 @@ class StockPriceChartPainter extends CustomPainter {
         labelRectWidth1,
         labelRectHeight);
     // Draw grey background behind the text labels
-    const radius = Radius.circular(4); // Adjust the radius as needed
+    const radius = Radius.circular(4);
+    const radiusZero = Radius.zero; // Adjust the radius as needed
 
     final backgroundPaint = Paint()
       ..color = Colors.grey.withOpacity(0.2) // Color of the rectangle
@@ -514,7 +515,7 @@ class StockPriceChartPainter extends CustomPainter {
     );
 
     pricePainter2.text = TextSpan(
-      text: prices[chartIndex2!].toString(),
+      text: prices[chartIndex2].toString(),
       style: const TextStyle(color: Colors.black, fontSize: 16),
     );
 
@@ -578,12 +579,11 @@ class StockPriceChartPainter extends CustomPainter {
         -40,
         labelRectWidth2,
         labelRectHeight);
-    // Draw grey background behind the text labels
 
     //------------------- POINT 3 -------------------//
 
     double price1 =
-        chartIndex1 <= chartIndex2! ? prices[chartIndex1] : prices[chartIndex2];
+        chartIndex1 <= chartIndex2 ? prices[chartIndex1] : prices[chartIndex2];
     double price2 =
         chartIndex1 <= chartIndex2 ? prices[chartIndex2] : prices[chartIndex1];
     List<String> price2ListString = price2.toString().split('.');
@@ -717,11 +717,8 @@ class StockPriceChartPainter extends CustomPainter {
     bool trueRight2 = chartAxis[chartIndex2].dx > chartAxis[chartIndex1].dx;
 
     if (pricePoint1 != null) {
-      bool differenceOverlap1 = labelDifferenceRectWidth ==
-              labelDifferenceRectMinWidth
-          ? chartAxis[chartIndex1].dx + labelRectWidth1 / 2 >= firstRectDx &&
-              chartAxis[chartIndex1].dx - labelRectWidth1 / 2 <= secondRectDx
-          : false;
+      bool differenceOverlap1 =
+          labelDifferenceRectWidth == labelDifferenceRectMinWidth;
 
       bool onRight1 = chartAxis[chartIndex1].dx - labelDiffernceDx >= 0;
       if (!swappable) {
@@ -751,26 +748,39 @@ class StockPriceChartPainter extends CustomPainter {
                 datePainter1.width / 2;
 
         labelRect1 = Rect.fromLTWH(
-            bounded1
-                ? boundedLabelRectDx1
-                : onRight1
-                    ? labelDiffernceDx + labelDifferenceRectWidth / 2
-                    : labelDiffernceDx -
-                        labelRectWidth1 -
-                        labelDifferenceRectWidth / 2,
+            onRight1
+                ? labelDiffernceDx + labelDifferenceRectWidth / 2
+                : labelDiffernceDx -
+                    labelRectWidth1 -
+                    labelDifferenceRectWidth / 2,
             -40,
             labelRectWidth1,
             labelRectHeight);
       } else {
-        pricePainter1Dx = chartAxis[chartIndex1].dx - pricePainter1.width / 2;
-        datePainter1Dx = chartAxis[chartIndex1].dx - datePainter1.width / 2;
+        pricePainter1Dx = bounded1
+            ? boundedLabelRectDx1 +
+                labelRectWidth1 / 2 -
+                pricePainter1.width / 2
+            : chartAxis[chartIndex1].dx - pricePainter1.width / 2;
+        datePainter1Dx = bounded1
+            ? boundedLabelRectDx1 + labelRectWidth1 / 2 - datePainter1.width / 2
+            : chartAxis[chartIndex1].dx - datePainter1.width / 2;
       }
-      final roundedRect = RRect.fromRectAndCorners(labelRect1,
-          topLeft: radius,
-          topRight: radius,
-          bottomLeft: radius,
-          bottomRight: radius);
-      canvas.drawRRect(roundedRect, Paint()..color = Colors.red);
+      final RRect roundedRect1;
+      if (pricePoint2 != null) {
+        roundedRect1 = RRect.fromRectAndCorners(labelRect1,
+            topLeft: !trueRight1 ? radius : radiusZero,
+            topRight: trueRight1 ? radius : radiusZero,
+            bottomLeft: !trueRight1 ? radius : radiusZero,
+            bottomRight: trueRight1 ? radius : radiusZero);
+      } else {
+        roundedRect1 = RRect.fromRectAndCorners(labelRect1,
+            topLeft: radius,
+            topRight: radius,
+            bottomLeft: radius,
+            bottomRight: radius);
+      }
+      canvas.drawRRect(roundedRect1, backgroundPaint);
       if (pricePoint2 == null) {
         pricePainter1.paint(
             canvas,
@@ -798,32 +808,14 @@ class StockPriceChartPainter extends CustomPainter {
                         12,
                 -36));
       } else {
-        pricePainter1.paint(
-            canvas,
-            Offset(
-                bounded1
-                    ? boundedLabelRectDx1 +
-                        labelRectWidth1 / 2 -
-                        pricePainter1.width / 2
-                    : pricePainter1Dx,
-                -36));
+        pricePainter1.paint(canvas, Offset(pricePainter1Dx, -36));
       }
       datePainter1.paint(
-          canvas,
-          Offset(
-              bounded1
-                  ? boundedLabelRectDx1 +
-                      labelRectWidth1 / 2 -
-                      datePainter1.width / 2
-                  : datePainter1Dx,
-              -36 + percentagePainter1.height + 2));
+          canvas, Offset(datePainter1Dx, -36 + percentagePainter1.height + 2));
     }
     if (pricePoint2 != null) {
-      bool differenceOverlap2 = labelDifferenceRectWidth ==
-              labelDifferenceRectMinWidth
-          ? chartAxis[chartIndex2].dx + labelRectWidth2 / 2 >= firstRectDx &&
-              chartAxis[chartIndex2].dx - labelRectWidth2 / 2 <= secondRectDx
-          : false;
+      bool differenceOverlap2 =
+          labelDifferenceRectWidth == labelDifferenceRectMinWidth;
 
       bool onRight2 = chartAxis[chartIndex2].dx - labelDiffernceDx >= 0;
       if (!swappable) {
@@ -853,28 +845,41 @@ class StockPriceChartPainter extends CustomPainter {
                 datePainter2.width / 2;
 
         labelRect2 = Rect.fromLTWH(
-            bounded2
-                ? boundedLabelRectDx2
-                : onRight2
-                    ? labelDiffernceDx + labelDifferenceRectWidth / 2
-                    : labelDiffernceDx -
-                        labelRectWidth2 -
-                        labelDifferenceRectWidth / 2,
+            onRight2
+                ? labelDiffernceDx + labelDifferenceRectWidth / 2
+                : labelDiffernceDx -
+                    labelRectWidth2 -
+                    labelDifferenceRectWidth / 2,
             -40,
             labelRectWidth2,
             labelRectHeight);
       } else {
-        datePainter2Dx = chartAxis[chartIndex2].dx - datePainter2.width / 2;
-        pricePainter2Dx = chartAxis[chartIndex2].dx - pricePainter2.width / 2;
+        datePainter2Dx = bounded2
+            ? boundedLabelRectDx2 + labelRectWidth2 / 2 - datePainter2.width / 2
+            : chartAxis[chartIndex2].dx - datePainter2.width / 2;
+        pricePainter2Dx = bounded2
+            ? boundedLabelRectDx2 +
+                labelRectWidth2 / 2 -
+                pricePainter2.width / 2
+            : chartAxis[chartIndex2].dx - pricePainter2.width / 2;
       }
 
-      final roundedRect2 = RRect.fromRectAndCorners(labelRect2,
-          topLeft: radius,
-          topRight: radius,
-          bottomLeft: radius,
-          bottomRight: radius);
+      final RRect roundedRect2;
+      if (pricePoint1 != null) {
+        roundedRect2 = RRect.fromRectAndCorners(labelRect2,
+            topLeft: !trueRight2 ? radius : radiusZero,
+            topRight: trueRight2 ? radius : radiusZero,
+            bottomLeft: !trueRight2 ? radius : radiusZero,
+            bottomRight: trueRight2 ? radius : radiusZero);
+      } else {
+        roundedRect2 = RRect.fromRectAndCorners(labelRect2,
+            topLeft: radius,
+            topRight: radius,
+            bottomLeft: radius,
+            bottomRight: radius);
+      }
 
-      canvas.drawRRect(roundedRect2, Paint()..color = Colors.blue);
+      canvas.drawRRect(roundedRect2, backgroundPaint);
 
       if (pricePoint1 == null) {
         pricePainter2.paint(
@@ -902,29 +907,13 @@ class StockPriceChartPainter extends CustomPainter {
                         12,
                 -36));
       } else {
-        pricePainter2.paint(
-            canvas,
-            Offset(
-                bounded2
-                    ? boundedLabelRectDx2 +
-                        labelRectWidth2 / 2 -
-                        pricePainter2.width / 2
-                    : pricePainter2Dx,
-                -36));
+        pricePainter2.paint(canvas, Offset(pricePainter2Dx, -36));
       }
 
       datePainter2.paint(
-          canvas,
-          Offset(
-              bounded2
-                  ? boundedLabelRectDx2 +
-                      labelRectWidth2 / 2 -
-                      datePainter2.width / 2
-                  : datePainter2Dx,
-              -36 + percentagePainter2.height + 2));
+          canvas, Offset(datePainter2Dx, -36 + percentagePainter2.height + 2));
     }
-    // print(labelRect1.center.dx);
-    print(labelRect2.centerLeft.dx);
+
     if (pricePoint1 == null) {
       // Draw y-axis labels with divisions
       TextPainter yLabelPainter = TextPainter(
