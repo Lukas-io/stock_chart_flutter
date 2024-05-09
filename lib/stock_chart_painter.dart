@@ -29,6 +29,11 @@ class StockPriceChartPainter extends CustomPainter {
     Offset? placedPoint2;
     int chartIndex2;
     double canvasCenterDx = size.width / 2;
+    Color riseColor = Colors.green;
+    Color riseColorShade700 = Colors.green.shade700;
+    Color fallColor = Colors.red;
+    Color noChangeColor = Colors.grey;
+    Color normalTextColor = Colors.black87;
 
     for (var data in stockPriceHistory) {
       dates.add(data.dateTime);
@@ -132,9 +137,18 @@ class StockPriceChartPainter extends CustomPainter {
         (prices[secondPoint] - prices[firstPoint]) / prices[firstPoint] * 100 <
             0;
 
-    Color pressedPaintColor1 = changes1 ? Colors.red : Colors.green;
-    Color pressedPaintColor2 = changes2 ? Colors.red : Colors.green;
-    Color paintColor = prices.first > prices.last ? Colors.red : Colors.green;
+    Color pressedPaintColor1 = changes1 ? fallColor : riseColor;
+    Color pressedPaintColor2 = changes2 ? fallColor : riseColor;
+    Color paintColor = prices.first > prices.last ? fallColor : riseColor;
+
+    // To get grey if there is no price change
+    pressedPaintColor1 = prices[chartIndex1] == prices.first
+        ? noChangeColor
+        : pressedPaintColor1;
+    pressedPaintColor2 = prices[secondPoint] == prices[firstPoint]
+        ? noChangeColor
+        : pressedPaintColor2;
+    paintColor = prices.first == prices.last ? noChangeColor : paintColor;
 
     Paint chartPaint = Paint()
       ..color = paintColor.withOpacity(0.4)
@@ -435,7 +449,7 @@ class StockPriceChartPainter extends CustomPainter {
 
     pricePainter1.text = TextSpan(
       text: prices[chartIndex1].toString(),
-      style: const TextStyle(color: Colors.black, fontSize: 16),
+      style: TextStyle(color: normalTextColor, fontSize: 16),
     );
 
     pricePainter1.layout();
@@ -446,8 +460,8 @@ class StockPriceChartPainter extends CustomPainter {
     );
     double percentage1 =
         (prices[chartIndex1] - prices.first) / prices.first * 100;
-    Color percentageColor1 =
-        percentage1 >= 0 ? Colors.green.shade700 : Colors.red;
+    Color percentageColor1 = percentage1 > 0 ? riseColorShade700 : fallColor;
+    percentageColor1 = percentage1 == 0 ? noChangeColor : percentageColor1;
     percentagePainter1.text = TextSpan(
       text: percentage1 > 0
           ? '+${percentage1.toStringAsFixed(2)}%'
@@ -465,7 +479,7 @@ class StockPriceChartPainter extends CustomPainter {
         '${dates[chartIndex1].day} ${monthNames[dates[chartIndex1].month]} ${dates[chartIndex1].year}';
     datePainter1.text = TextSpan(
       text: displayDate1,
-      style: const TextStyle(color: Colors.black, fontSize: 14),
+      style: TextStyle(color: normalTextColor, fontSize: 14),
     );
 
     datePainter1.layout();
@@ -478,9 +492,11 @@ class StockPriceChartPainter extends CustomPainter {
           : datePainter1.width;
     }
 
+    int paddingLabelWidth = 12;
+    int paddingLabelHeight = 12;
     // Adding Padding to the shape
-    labelRectWidth1 += 12;
-    labelRectHeight += 12;
+    labelRectWidth1 += paddingLabelWidth;
+    labelRectHeight += paddingLabelHeight;
 
     double boundedLabelRectDx1 = 0;
     bool bounded1 = false;
@@ -516,7 +532,7 @@ class StockPriceChartPainter extends CustomPainter {
 
     pricePainter2.text = TextSpan(
       text: prices[chartIndex2].toString(),
-      style: const TextStyle(color: Colors.black, fontSize: 16),
+      style: TextStyle(color: normalTextColor, fontSize: 16),
     );
 
     pricePainter2.layout();
@@ -525,10 +541,11 @@ class StockPriceChartPainter extends CustomPainter {
       textAlign: TextAlign.center,
       textDirection: TextDirection.ltr,
     );
+
     double percentage2 =
         (prices[chartIndex2] - prices.first) / prices.first * 100;
-    Color percentageColor2 =
-        percentage2 >= 0 ? Colors.green.shade700 : Colors.red;
+    Color percentageColor2 = percentage2 > 0 ? riseColorShade700 : fallColor;
+    percentageColor2 = percentage2 == 0 ? noChangeColor : percentageColor2;
     percentagePainter2.text = TextSpan(
       text: percentage2 > 0
           ? '+${percentage2.toStringAsFixed(2)}%'
@@ -546,7 +563,7 @@ class StockPriceChartPainter extends CustomPainter {
         '${dates[chartIndex2].day} ${monthNames[dates[chartIndex2].month]} ${dates[chartIndex1].year}';
     datePainter2.text = TextSpan(
       text: displayDate2,
-      style: const TextStyle(color: Colors.black, fontSize: 14),
+      style: TextStyle(color: normalTextColor, fontSize: 14),
     );
 
     datePainter2.layout();
@@ -560,7 +577,7 @@ class StockPriceChartPainter extends CustomPainter {
     }
 
     // Adding Padding to the shape
-    labelRectWidth2 += 12;
+    labelRectWidth2 += paddingLabelWidth;
 
     double boundedLabelRectDx2 = 0;
     bool bounded2 = false;
@@ -603,7 +620,8 @@ class StockPriceChartPainter extends CustomPainter {
       fixedDecimalPoint = 0;
     }
 
-    Color priceColor = price2 > price1 ? Colors.green : Colors.red;
+    Color priceColor = price2 > price1 ? riseColor : fallColor;
+    priceColor = price2 == price1 ? noChangeColor : priceColor;
 
     String pointDifference =
         (price2 - price1).toStringAsFixed(fixedDecimalPoint);
@@ -786,12 +804,10 @@ class StockPriceChartPainter extends CustomPainter {
             canvas,
             Offset(
                 bounded1
-                    ? boundedLabelRectDx1 +
-                        labelRectWidth1 / 4 -
-                        pricePainter1.width / 2
+                    ? boundedLabelRectDx1 + paddingLabelWidth / 4
                     : chartAxis[chartIndex1].dx -
-                        pricePainter1.width / 2 -
-                        labelRectWidth1 / 4,
+                        labelRect1.width / 2 +
+                        paddingLabelWidth / 4,
                 -36));
 
         percentagePainter1.paint(
@@ -799,13 +815,13 @@ class StockPriceChartPainter extends CustomPainter {
             Offset(
                 bounded1
                     ? boundedLabelRectDx1 +
-                        labelRectWidth1 / 4 +
-                        pricePainter1.width / 2 +
-                        12
+                        labelRect1.width -
+                        paddingLabelWidth / 4 -
+                        percentagePainter1.width
                     : chartAxis[chartIndex1].dx +
-                        pricePainter1.width / 2 -
-                        labelRectWidth1 / 4 +
-                        12,
+                        labelRect1.width / 2 -
+                        paddingLabelWidth / 4 -
+                        percentagePainter1.width,
                 -36));
       } else {
         pricePainter1.paint(canvas, Offset(pricePainter1Dx, -36));
@@ -963,7 +979,7 @@ class StockPriceChartPainter extends CustomPainter {
           text: !muchDifference && differenceDivision < 1
               ? labelValue.toStringAsFixed(fixedDecimalPoint + 1)
               : labelValue.toStringAsFixed(fixedDecimalPoint),
-          style: const TextStyle(color: Colors.black, fontSize: 12),
+          style: TextStyle(color: normalTextColor, fontSize: 12),
         );
         yLabelPainter.layout();
         double y = size.height -
@@ -1035,7 +1051,7 @@ class StockPriceChartPainter extends CustomPainter {
 
       xLabelPainter.text = TextSpan(
         text: xDate,
-        style: const TextStyle(color: Colors.black, fontSize: 12),
+        style: TextStyle(color: normalTextColor, fontSize: 12),
       );
       xLabelPainter.layout();
       double x =
@@ -1049,7 +1065,8 @@ class StockPriceChartPainter extends CustomPainter {
         textDirection: TextDirection.ltr,
       );
       double percent = (prices.last - prices.first) / prices.first * 100;
-      Color percentColor = percent >= 0 ? Colors.green.shade700 : Colors.red;
+      Color percentColor = percent > 0 ? riseColorShade700 : fallColor;
+      percentColor = percent == 0 ? noChangeColor : percentColor;
       percentagePainter.text = TextSpan(
         text: percent > 0
             ? '+${percent.toStringAsFixed(2)}%'
