@@ -33,7 +33,6 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
   List<StockData>? stockData;
   bool updated = false;
   String selectedRange = '1M';
-  int supported = 1;
   Offset? onPress1;
   Offset? onPress2;
   List<Offset?> pointersLocation = [null, null];
@@ -89,19 +88,6 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
                 }
                 setState(() {});
               },
-
-              /*gestures: {
-                HorizontalMultiDragGestureRecognizer:
-                    GestureRecognizerFactoryWithHandlers<
-                            HorizontalMultiDragGestureRecognizer>(
-                        () => HorizontalMultiDragGestureRecognizer(),
-                        (instance) {
-                  instance.onStart = (_) {
-                    print(_);
-                  };
-                }),
-              },*/
-
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 0, vertical: 40.0),

@@ -560,7 +560,7 @@ class StockPriceChartPainter extends CustomPainter {
     );
 
     String displayDate2 =
-        '${dates[chartIndex2].day} ${monthNames[dates[chartIndex2].month]} ${dates[chartIndex1].year}';
+        '${dates[chartIndex2].day} ${monthNames[dates[chartIndex2].month]} ${dates[chartIndex2].year}';
     datePainter2.text = TextSpan(
       text: displayDate2,
       style: TextStyle(color: normalTextColor, fontSize: 14),
