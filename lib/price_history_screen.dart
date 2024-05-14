@@ -29,7 +29,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
     loadJsonFromAssets();
   }
 
-  List<StockData>? stockPriceHistory;
+  List<StockData>? priceHistory;
   List<StockData>? stockData;
   bool updated = false;
   String selectedRange = '1M';
@@ -44,82 +44,184 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
       dateRange(selectedRange);
 
       if (!updated) {
-        stockPriceHistory = stockData;
+        priceHistory = stockData;
       }
 
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text('Stock Price History'),
-        ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Listener(
-              onPointerDown: (details) {
-                if (details.device == 0) {
-                  pointersLocation[0] = details.localPosition;
-                }
-                if (details.device == 1) {
-                  pointersLocation[1] = details.localPosition;
-                }
-                setState(() {});
-              },
-              onPointerMove: (details) {
-                if (details.device == 0) {
-                  pointersLocation[0] = details.localPosition;
-                }
-                if (details.device == 1) {
-                  pointersLocation[1] = details.localPosition;
-                }
-
-                onPress1 = pointersLocation[0];
-                onPress2 = pointersLocation[1];
-                setState(() {});
-              },
-              onPointerUp: (details) {
-                if (details.device == 0) {
-                  pointersLocation[0] = null;
-                  onPress1 = null;
-                }
-                if (details.device == 1) {
-                  pointersLocation[1] = null;
-                  onPress2 = null;
-                }
-                setState(() {});
-              },
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 0, vertical: 40.0),
-                child: CustomPaint(
-                  size: Size(MediaQuery.of(context).size.width - 5, 200.0),
-                  painter: StockPriceChartPainter(
-                      stockPriceHistory!, onPress1, onPress2),
-                ),
-              ),
-            ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 50.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      return SafeArea(
+        child: Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.only(top: 40.0, bottom: 40.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  rangeButton(
-                    '5D',
+                  const CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ2rXJqxDvNztnTy_dA_gbUQikeTGI700aoGlfBq2yf9A&s'),
+                    radius: 50.0,
                   ),
-                  rangeButton('2W'),
-                  rangeButton('1M'),
-                  rangeButton('3M'),
-                  rangeButton('6M'),
-                  rangeButton('YTD'),
-                  rangeButton('1Y'),
-                  rangeButton('5Y'),
-                  rangeButton('All'),
+                  Text(
+                    'Guaranty Trust Holding Company PLC'.toUpperCase(),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                        fontSize: 15,
+                        letterSpacing: 00.1),
+                  ),
+                  Text(
+                    "GTCO",
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  Text(
+                    '₦${priceHistory!.last.price}',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                        fontSize: 32,
+                        letterSpacing: 1.1),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '+₦${(priceHistory!.last.price - priceHistory![priceHistory!.length - 3].price).toStringAsFixed(2)} ${((priceHistory!.last.price - priceHistory![priceHistory!.length - 3].price) / priceHistory![priceHistory!.length - 3].price).toStringAsFixed(2)}%',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.green.shade700,
+                            fontSize: 16,
+                            letterSpacing: 0.9),
+                      ),
+                      Text(
+                        ' at close',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade700,
+                            fontSize: 14,
+                            letterSpacing: 0.9),
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Listener(
+                        onPointerDown: (details) {
+                          if (details.device == 0) {
+                            pointersLocation[0] = details.localPosition;
+                          }
+                          if (details.device == 1) {
+                            pointersLocation[1] = details.localPosition;
+                          }
+                          setState(() {});
+                        },
+                        onPointerMove: (details) {
+                          if (details.device == 0) {
+                            pointersLocation[0] = details.localPosition;
+                          }
+                          if (details.device == 1) {
+                            pointersLocation[1] = details.localPosition;
+                          }
+
+                          onPress1 = pointersLocation[0];
+                          onPress2 = pointersLocation[1];
+                          setState(() {});
+                        },
+                        onPointerUp: (details) {
+                          if (details.device == 0) {
+                            pointersLocation[0] = null;
+                            onPress1 = null;
+                          }
+                          if (details.device == 1) {
+                            pointersLocation[1] = null;
+                            onPress2 = null;
+                          }
+                          setState(() {});
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 40.0),
+                          child: CustomPaint(
+                            size: Size(
+                                MediaQuery.of(context).size.width - 5, 200.0),
+                            painter: StockPriceChartPainter(
+                                priceHistory!, onPress1, onPress2),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 50.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            rangeButton(
+                              '5D',
+                            ),
+                            rangeButton('2W'),
+                            rangeButton('1M'),
+                            rangeButton('3M'),
+                            rangeButton('6M'),
+                            rangeButton('YTD'),
+                            rangeButton('1Y'),
+                            rangeButton('5Y'),
+                            rangeButton('All'),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 50.0,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade600,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: const Text(
+                              'Buy',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 24),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10.0,
+                        ),
+                        Expanded(
+                          child: Container(
+                            height: 50.0,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade600,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            child: const Text(
+                              'Sell',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 24),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),
-          ],
+          ),
         ),
       );
     } else {
@@ -196,7 +298,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
     for (int i = 0; i < dates.length - 1; i++) {
       if (beginDate.isAtSameMomentAs(dates[i]) ||
           beginDate.isBefore(dates[i])) {
-        stockPriceHistory = stockData?.sublist(i);
+        priceHistory = stockData?.sublist(i);
 
         updated = true;
         break;
