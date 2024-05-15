@@ -59,7 +59,7 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         priceHistory = stockData;
       }
       double chartWidth = MediaQuery.of(context).size.width;
-      chartWidth = chartWidth > 960 ? 960 : chartWidth;
+      chartWidth = chartWidth > 800 ? 800 : chartWidth;
 
       return SafeArea(
         child: Scaffold(
@@ -152,19 +152,36 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
                                 }
                               },
                               onHover: (events) {
-                                setState(() {
-                                  if (multiTouch) {
-                                    pointersLocation[0] = events.localPosition;
-                                    pointersLocation[1] = Offset(
-                                        chartWidth - events.localPosition.dx,
-                                        events.localPosition.dy);
-                                  } else {
-                                    pointersLocation[0] = events.localPosition;
-                                    pointersLocation[1] = null;
-                                  }
-                                  onPress1 = pointersLocation[0];
-                                  onPress2 = pointersLocation[1];
-                                });
+                                if (events.kind == PointerDeviceKind.touch) {
+                                  setState(() {
+                                    if (events.pointer == 0) {
+                                      pointersLocation[0] =
+                                          events.localPosition;
+                                    } else if (events.pointer == 1) {
+                                      pointersLocation[0] =
+                                          events.localPosition;
+                                    }
+                                    onPress1 = pointersLocation[0];
+                                    onPress2 = pointersLocation[1];
+                                  });
+                                } else if (events.kind ==
+                                    PointerDeviceKind.mouse) {
+                                  setState(() {
+                                    if (multiTouch) {
+                                      pointersLocation[0] =
+                                          events.localPosition;
+                                      pointersLocation[1] = Offset(
+                                          chartWidth - events.localPosition.dx,
+                                          events.localPosition.dy);
+                                    } else {
+                                      pointersLocation[0] =
+                                          events.localPosition;
+                                      pointersLocation[1] = null;
+                                    }
+                                    onPress1 = pointersLocation[0];
+                                    onPress2 = pointersLocation[1];
+                                  });
+                                }
                               },
                               onExit: (events) {
                                 setState(() {
