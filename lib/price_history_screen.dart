@@ -46,6 +46,8 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
       if (!updated) {
         priceHistory = stockData;
       }
+      double chartWidth = MediaQuery.of(context).size.width;
+      chartWidth = chartWidth > 960 ? 960 : chartWidth;
 
       return SafeArea(
         child: Scaffold(
