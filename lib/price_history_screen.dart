@@ -107,74 +107,77 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
                       ),
                     ],
                   ),
-                  Column(
-                    children: [
-                      Listener(
-                        onPointerDown: (details) {
-                          if (details.device == 0) {
-                            pointersLocation[0] = details.localPosition;
-                          }
-                          if (details.device == 1) {
-                            pointersLocation[1] = details.localPosition;
-                          }
-                          setState(() {});
-                        },
-                        onPointerMove: (details) {
-                          if (details.device == 0) {
-                            pointersLocation[0] = details.localPosition;
-                          }
-                          if (details.device == 1) {
-                            pointersLocation[1] = details.localPosition;
-                          }
+                  SizedBox(
+                    width: chartWidth,
+                    child: Column(
+                      children: [
+                        Listener(
+                          onPointerDown: (details) {
+                            if (details.device == 0) {
+                              pointersLocation[0] = details.localPosition;
+                            }
+                            if (details.device == 1) {
+                              pointersLocation[1] = details.localPosition;
+                            }
+                            setState(() {});
+                          },
+                          onPointerMove: (details) {
+                            if (details.device == 0) {
+                              pointersLocation[0] = details.localPosition;
+                            }
+                            if (details.device == 1) {
+                              pointersLocation[1] = details.localPosition;
+                            }
 
-                          onPress1 = pointersLocation[0];
-                          onPress2 = pointersLocation[1];
-                          setState(() {});
-                        },
-                        onPointerUp: (details) {
-                          if (details.device == 0) {
-                            pointersLocation[0] = null;
-                            onPress1 = null;
-                          }
-                          if (details.device == 1) {
-                            pointersLocation[1] = null;
-                            onPress2 = null;
-                          }
-                          setState(() {});
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 40.0),
-                          child: CustomPaint(
-                            size: Size(
-                                MediaQuery.of(context).size.width - 5, 200.0),
-                            painter: StockPriceChartPainter(
-                                priceHistory!, onPress1, onPress2),
+                            onPress1 = pointersLocation[0];
+                            onPress2 = pointersLocation[1];
+                            setState(() {});
+                          },
+                          onPointerUp: (details) {
+                            if (details.device == 0) {
+                              pointersLocation[0] = null;
+                              onPress1 = null;
+                            }
+                            if (details.device == 1) {
+                              pointersLocation[1] = null;
+                              onPress2 = null;
+                            }
+                            setState(() {});
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 0, vertical: 40.0),
+                            child: CustomPaint(
+                              size: Size(
+                                  MediaQuery.of(context).size.width - 5, 200.0),
+                              painter: StockPriceChartPainter(
+                                  priceHistory!, onPress1, onPress2),
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0, vertical: 50.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            rangeButton(
-                              '5D',
-                            ),
-                            rangeButton('2W'),
-                            rangeButton('1M'),
-                            rangeButton('3M'),
-                            rangeButton('6M'),
-                            rangeButton('YTD'),
-                            rangeButton('1Y'),
-                            rangeButton('5Y'),
-                            rangeButton('All'),
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8.0, vertical: 50.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              rangeButton(
+                                '5D',
+                              ),
+                              rangeButton('2W'),
+                              rangeButton('1M'),
+                              rangeButton('3M'),
+                              rangeButton('6M'),
+                              rangeButton('YTD'),
+                              rangeButton('1Y'),
+                              rangeButton('5Y'),
+                              rangeButton('All'),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -227,7 +230,9 @@ class _StockPriceHistoryScreenState extends State<StockPriceHistoryScreen> {
         ),
       );
     } else {
-      return const CircularProgressIndicator();
+      return const Center(
+          child: SizedBox(
+              height: 100, width: 100, child: CircularProgressIndicator()));
     }
   }
 
